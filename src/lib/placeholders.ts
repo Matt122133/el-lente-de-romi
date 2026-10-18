@@ -4,8 +4,12 @@
 
 export type Foto = {
   id: string;
+  // Ruta en R2 sin prefijo ni variante (ver lib/imagenes.ts).
+  ruta: string;
   width: number;
   height: number;
+  // Versión borrosa de ~30 caracteres para mostrar mientras carga. Null en las de mentira.
+  thumbhash: string | null;
   alt: string;
 };
 
@@ -42,8 +46,10 @@ export function fotosDeMentira(semilla: string, cantidad: number): Foto[] {
     const [w, h] = PROPORCIONES[Math.floor(rand() * PROPORCIONES.length)];
     return {
       id: `${semilla}-${i}`,
+      ruta: `${semilla}/${String(i + 1).padStart(4, "0")}`,
       width: w * 1000,
       height: h * 1000,
+      thumbhash: null,
       alt: "",
     };
   });

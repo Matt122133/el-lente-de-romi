@@ -9,6 +9,8 @@
   --color-borde: #e6e6e6;
   --color-acento: #1a1a1a;
   --color-acento-texto: #ffffff;
+  --color-error: #a33a2c;
+  --color-lightbox: rgba(255, 255, 255, 0.97);
 
   --skeleton-base: #e9e9e9;
   --skeleton-brillo: #f4f4f4;

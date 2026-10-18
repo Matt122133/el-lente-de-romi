@@ -309,6 +309,16 @@ h2 {
   flex-grow: var(--ar);
   flex-basis: calc(var(--ar) * var(--row-h));
   min-width: 0;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.jgrid-item:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
 }
 
 @media (max-width: 600px) {
@@ -404,4 +414,128 @@ h2 {
   margin: 4px 0 0;
   font-size: 0.85rem;
   color: var(--color-texto-suave);
+}
+
+.form-clave {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 320px);
+  text-align: left;
+}
+
+.form-clave label {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.form-clave input {
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 0;
+}
+
+.form-clave input:focus {
+  outline: none;
+  border-color: var(--color-texto);
+}
+
+.form-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-error);
+}
+
+/* ---------- Lightbox ---------- */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-lightbox);
+}
+
+.lightbox-barra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px var(--gutter);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+.lightbox-acciones {
+  display: flex;
+  gap: 24px;
+}
+
+.lightbox-accion {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+.lightbox-accion.deshabilitado {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.lightbox-escenario {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 calc(var(--gutter) + 40px) 40px;
+  container-type: size;
+}
+
+/* Lo más grande que entre en el escenario sin deformar la proporción. */
+.lightbox-foto {
+  width: min(100cqw, 100cqh * var(--ar));
+  aspect-ratio: var(--ar);
+}
+
+.lightbox-foto .skeleton {
+  width: 100%;
+  height: 100%;
+}
+
+.lightbox-flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 96px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 2.4rem;
+  font-weight: 200;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+}
+
+.lightbox-flecha:hover {
+  color: var(--color-texto);
+}
+
+.lightbox-anterior {
+  left: 4px;
+}
+
+.lightbox-siguiente {
+  right: 4px;
 }
