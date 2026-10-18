@@ -1,0 +1,407 @@
+@import "../styles/theme.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente-texto);
+  font-size: var(--texto-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-titulos);
+  font-weight: 400;
+  letter-spacing: var(--tracking-titulos);
+  text-transform: uppercase;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+h2 {
+  font-size: 1.05rem;
+}
+
+.contenedor {
+  width: 100%;
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.seccion {
+  padding: 56px 0;
+}
+
+.seccion-titulo {
+  margin-bottom: 28px;
+}
+
+.texto-suave {
+  color: var(--color-texto-suave);
+}
+
+/* ---------- Skeleton ---------- */
+
+.skeleton {
+  display: block;
+  background: linear-gradient(
+    100deg,
+    var(--skeleton-base) 40%,
+    var(--skeleton-brillo) 50%,
+    var(--skeleton-base) 60%
+  );
+  background-size: 300% 100%;
+  animation: brillo 1.6s ease-in-out infinite;
+}
+
+@keyframes brillo {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--skeleton-base);
+  }
+}
+
+.texto-skeleton {
+  display: grid;
+  gap: 10px;
+}
+
+.texto-skeleton span {
+  height: 12px;
+  border-radius: 2px;
+}
+
+.texto-skeleton span:last-child {
+  width: 60%;
+}
+
+/* ---------- Header y footer ---------- */
+
+.header {
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 32px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.logo {
+  font-family: var(--fuente-titulos);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav a {
+  color: var(--color-texto-suave);
+  transition: color 0.2s;
+}
+
+.nav a:hover {
+  color: var(--color-texto);
+}
+
+.footer {
+  border-top: 1px solid var(--color-borde);
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+
+.redes {
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.redes a:hover {
+  color: var(--color-texto);
+}
+
+/* ---------- Botones ---------- */
+
+.boton {
+  display: inline-block;
+  padding: 14px 28px;
+  background: var(--color-acento);
+  color: var(--color-acento-texto);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.boton:hover {
+  opacity: 0.85;
+}
+
+.boton-deshabilitado {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.boton-deshabilitado:hover {
+  opacity: 0.35;
+}
+
+/* ---------- Home ---------- */
+
+.hero {
+  position: relative;
+  height: min(78vh, 760px);
+  min-height: 360px;
+}
+
+.hero .skeleton {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-texto {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  padding: 0 var(--gutter);
+}
+
+.hero-texto p {
+  margin: 0;
+  color: var(--color-texto-suave);
+}
+
+/* ---------- Categorías ---------- */
+
+.categorias {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+
+@media (min-width: 900px) {
+  .categorias {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.categoria-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.categoria-card .skeleton {
+  transition: transform 0.6s ease, filter 0.4s;
+}
+
+.categoria-nombre {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0);
+  transition: background 0.4s;
+}
+
+.categoria-card:hover .skeleton {
+  transform: scale(1.03);
+}
+
+.categoria-card:hover .categoria-nombre {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- Grilla justificada ---------- */
+
+.jgrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--grid-gap);
+}
+
+/* Relleno invisible que absorbe el espacio sobrante de la última fila,
+   así esa fila no se estira a lo loco. */
+.jgrid::after {
+  content: "";
+  flex-grow: 999999;
+}
+
+.jgrid-item {
+  flex-grow: var(--ar);
+  flex-basis: calc(var(--ar) * var(--row-h));
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .jgrid {
+    --row-h: 160px !important;
+  }
+}
+
+/* ---------- Sobre mí y bloques de dos columnas ---------- */
+
+.dos-columnas {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .dos-columnas {
+    grid-template-columns: 5fr 7fr;
+    gap: 64px;
+  }
+}
+
+.prosa {
+  max-width: 60ch;
+}
+
+.prosa p {
+  margin: 0 0 1em;
+}
+
+/* ---------- Encabezado de página ---------- */
+
+.encabezado {
+  padding: 56px 0 32px;
+  text-align: center;
+}
+
+.encabezado p {
+  margin: 12px auto 0;
+  max-width: 60ch;
+  color: var(--color-texto-suave);
+}
+
+/* ---------- Contacto ---------- */
+
+.contacto {
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.contacto-redes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+/* ---------- Galería de entrega ---------- */
+
+.galeria-portada {
+  position: relative;
+  height: min(60vh, 560px);
+  min-height: 280px;
+}
+
+.galeria-portada .skeleton {
+  position: absolute;
+  inset: 0;
+}
+
+.galeria-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--color-borde);
+  margin-bottom: 24px;
+}
+
+.galeria-barra p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
