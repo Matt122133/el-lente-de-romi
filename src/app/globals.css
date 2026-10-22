@@ -290,6 +290,41 @@ h2 {
   background: rgba(255, 255, 255, 0.55);
 }
 
+/* ---------- Foto real ---------- */
+
+/* El ThumbHash de fondo ocupa el lugar de la foto hasta que llega la imagen. */
+.foto {
+  display: block;
+  width: 100%;
+  background-color: var(--skeleton-base);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.foto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--fundido-foto) ease;
+}
+
+.foto img.foto-cargada {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foto img {
+    transition: none;
+  }
+}
+
+.lightbox-foto .foto {
+  height: 100%;
+}
+
 /* ---------- Grilla justificada ---------- */
 
 .jgrid {

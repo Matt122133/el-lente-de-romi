@@ -1,7 +1,7 @@
 ---
 owner: el-lente-de-romi
 status: living
-last_reviewed: 2026-10-18
+last_reviewed: 2026-10-21
 update_trigger: on-module-change
 ---
 
@@ -16,10 +16,12 @@ only says where things are.
 
 The site of El Lente de Romi, a photographer: a public **portfolio** (home,
 categories, about, contact) and private **delivery galleries** where her clients
-and their guests see and download the photos. It replaces Pixieset. Today it is
-a skeleton: real pages and layout, placeholder photos, content in TypeScript
-files. Planned systems it will talk to: Cloudflare R2 for the photos (served
-from `img.ellentederomi.com`, never through the app) and Postgres for metadata.
+and their guests see and download the photos. It replaces Pixieset. Real pages
+and layout; photos are real wherever a local manifest exists (made by
+`npm run fotos`) and placeholders everywhere else; content in TypeScript files.
+Photos live in Cloudflare R2: a public bucket with the derivatives (served from
+`img.ellentederomi.com`, never through the app) and a private one with the
+gallery originals. Postgres for metadata is feature 003.
 Contact is WhatsApp only — there are no forms besides the gallery password.
 
 ## Top-level layout
@@ -28,12 +30,17 @@ Contact is WhatsApp only — there are no forms besides the gallery password.
       app/          routes (App Router): /, /portfolio, /portfolio/[categoria],
                     /sobre-mi, /contacto, /galeria/[slug]
       components/   shared UI: header, footer, grid, lightbox, skeletons
-      content/      site texts, categories, galleries — the future DB rows
-      lib/          pure helpers: image URLs, gallery access, placeholder photos
+      content/      site texts, categories, galleries, photos (from manifiestos/)
+                    — the future DB rows
+      lib/          pure helpers: Foto type, image URLs, gallery access,
+                    placeholder photos
       styles/       theme.css — the visual identity, in one place
     specs/          spec-kit features (spec, plan, tasks)
     docs/           harness process docs and harness ADRs
+    scripts/fotos/    local CLI: JPEG folder → derivatives, manifest, R2 upload
     scripts/harness/  plan-coverage sensor and spec-kit gate
+    manifiestos/, salida/  local output of scripts/fotos (gitignored: they
+                    carry client slugs and photos)
 
 ## Module pattern
 
@@ -41,25 +48,36 @@ Contact is WhatsApp only — there are no forms besides the gallery password.
   action) live next to it, e.g. `galeria/[slug]/FormularioClave.tsx` and
   `acciones.ts`.
 - Anything that will come from the database lives in `src/content/` behind a
-  getter (`getCategoria`, `getGaleria`). Pages call the getter, never the array,
-  so swapping in a query changes one file.
+  getter (`getCategoria`, `getGaleria`, `getFotos`). Pages call the getter,
+  never the array, so swapping in a query changes one file. `getFotos` reads
+  `manifiestos/<destino>.json` and falls back to placeholder photos.
 - Colors, fonts and spacing are CSS variables in `src/styles/theme.css`;
   components only use the variables (doc section 9).
 - Server components by default. `"use client"` only where there is state:
-  today `JustifiedGrid` (opens the lightbox), `Lightbox`, and `FormularioClave`.
+  today `JustifiedGrid` (opens the lightbox), `Lightbox`, `Foto` (load state,
+  ThumbHash decode) and `FormularioClave`.
+- A photo is real when it has a `thumbhash`; then `Foto` draws it with
+  `<picture>` (AVIF, WebP fallback, srcset). Without one, `FotoSkeleton`.
+  Never `next/image`: its optimizer would route image bytes through the app.
 
 ## Dependency direction
 
 `app → components → lib`, and `app/components → content`. `lib/` and
-`content/` import nothing from `app/` or `components/`. `lib/acceso.ts` uses
-`node:crypto` and must only be imported from server code. Enforced by review.
+`content/` import nothing from `app/` or `components/`. `lib/acceso.ts` and
+`content/fotos.ts` use `node:` modules and must only be imported from server
+code. `scripts/fotos/` imports `lib/fotos.ts` and `lib/imagenes.ts` with
+relative `.ts` paths (Node strip-types, no bundler), so those two files must
+stay free of imports. Enforced by review.
 
 ## Entry point and bootstrap
 
 `src/app/layout.tsx` renders header, page and footer and sets the metadata from
 `src/content/site.ts`. There is no config loading or shared infrastructure yet.
-The only environment variable is `GALERIAS_SECRETO` (signs the gallery access
-cookie); without it a development value is used.
+Environment variables are listed in `.env.example`: `GALERIAS_SECRETO` (signs
+the gallery access cookie; a development value is used without it),
+`NEXT_PUBLIC_IMG_HOST` (image host, default `img.ellentederomi.com`), and the
+`R2_*` credentials and bucket names that only `npm run fotos -- --subir` reads
+from `.env.local`.
 
 ## Current hotspots
 
@@ -71,9 +89,13 @@ cookie); without it a development value is used.
 - `src/lib/acceso.ts` + `galeria/[slug]/acciones.ts` — the password check and
   the HMAC-signed cookie, scoped to the gallery's path.
 - `src/lib/imagenes.ts` — the R2 path contract: host, `romi/` prefix,
-  derivative widths. The upload script of roadmap phase 1 must produce exactly
-  these names.
-- `src/lib/placeholders.ts` — the `Foto` type and deterministic fake photos.
+  derivative widths, derivative and original keys. `scripts/fotos/` imports it,
+  so the names the script uploads and the URLs the site asks for cannot drift.
+- `scripts/fotos/pipeline.ts` — quality, color and naming of the derivatives
+  (constitution IV). Changing anything there means bumping `PIPELINE`, which
+  changes every URL (derivatives are cached for a year).
+- `src/lib/placeholders.ts` — deterministic fake photos (the `Foto` type is in
+  `src/lib/fotos.ts`).
 
 ## Adding a new module
 
