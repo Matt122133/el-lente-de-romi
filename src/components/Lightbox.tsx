@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, type CSSProperties } from "react";
-import type { Foto } from "@/lib/placeholders";
+import type { Foto as FotoDatos } from "@/lib/fotos";
+import { srcSet } from "@/lib/imagenes";
+import { Foto } from "./Foto";
 import { FotoSkeleton } from "./Skeleton";
 
-// Vista de una foto a pantalla completa, con flechas y teclado. Cuando haya fotos reales,
-// acá se pre-cargan la anterior y la siguiente (sección 6 del doc): es lo que hace que
-// navegar se sienta inmediato.
+// Vista de una foto a pantalla completa, con flechas y teclado. Pre-carga la anterior y la
+// siguiente (sección 6 del doc): es lo que hace que navegar se sienta inmediato.
 export function Lightbox({
   fotos,
   indice,
@@ -14,7 +15,7 @@ export function Lightbox({
   onCerrar,
   descargable,
 }: {
-  fotos: Foto[];
+  fotos: FotoDatos[];
   indice: number;
   onCambiar: (i: number) => void;
   onCerrar: () => void;
@@ -33,6 +34,16 @@ export function Lightbox({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [anterior, siguiente, onCambiar, onCerrar]);
+
+  useEffect(() => {
+    for (const i of [anterior, siguiente]) {
+      const vecina = i !== null ? fotos[i] : null;
+      if (!vecina?.thumbhash) continue;
+      const img = new Image();
+      img.sizes = "100vw";
+      img.srcset = srcSet(vecina.ruta, "avif");
+    }
+  }, [anterior, siguiente, fotos]);
 
   // Que la página de atrás no scrollee mientras está abierto.
   useEffect(() => {
@@ -68,7 +79,11 @@ export function Lightbox({
           style={{ "--ar": foto.width / foto.height } as CSSProperties}
           onClick={(e) => e.stopPropagation()}
         >
-          <FotoSkeleton />
+          {foto.thumbhash ? (
+            <Foto key={foto.id} foto={foto} sizes="100vw" prioridad />
+          ) : (
+            <FotoSkeleton />
+          )}
         </div>
       </div>
 

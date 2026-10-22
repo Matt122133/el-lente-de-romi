@@ -7,9 +7,10 @@ export type Galeria = {
   fecha: string; // día del evento, AAAA-MM-DD
   venceEl: string; // duran un mes (sección 12 del doc), AAAA-MM-DD
   clave: string; // en la DB va hasheada, nunca en texto plano
+  // Cuántas fotos de mentira mostrar mientras la galería no tiene manifiesto.
   cantidadFotos: number;
-  // El .zip que Romi ya arma para el cliente se sube tal cual (sección 8).
-  tieneZip: boolean;
+  // El .zip con todas las fotos no pasa por el sitio: Romi se lo pasa al cliente por su
+  // cuenta (sección 0 del doc, 21/10/2026).
 };
 
 const galerias: Galeria[] = [
@@ -20,7 +21,6 @@ const galerias: Galeria[] = [
     venceEl: "2026-11-11",
     clave: "demo",
     cantidadFotos: 40,
-    tieneZip: true,
   },
   {
     slug: "ejemplo-vencida",
@@ -29,7 +29,6 @@ const galerias: Galeria[] = [
     venceEl: "2026-09-02",
     clave: "demo",
     cantidadFotos: 40,
-    tieneZip: true,
   },
 ];
 

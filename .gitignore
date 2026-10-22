@@ -8,6 +8,10 @@ next-env.d.ts
 .DS_Store
 npm-debug.log*
 
+# Fotos reales: manifiestos y derivadas locales llevan slugs y fotos de clientes
+manifiestos/
+salida/
+
 # Harness
 __pycache__/
 **/__pycache__/
