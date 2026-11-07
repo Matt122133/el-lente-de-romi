@@ -103,9 +103,9 @@ quickstart §1 y §2.
 ## Phase 6: Polish
 
 - [X] T020 Actualizar `ARCHITECTURE.md`: `scripts/fotos/` en el layout, `src/content/fotos.ts` y `Foto.tsx` en el patrón, `NEXT_PUBLIC_IMG_HOST` y las variables de R2 en bootstrap, `Foto.tsx` como cliente
-- [ ] T021 Correr `npm run typecheck && npm run build && npm run fotos:probar` (verify) y el quickstart §1 a §3 en el navegador, incluida una corrida de un lote grande (~300 fotos, o las que haya) con el tiempo del resumen para SC-005; anotar el resultado en `specs/002-fotos-reales/plan.md` § Verificación
+- [ ] T021 Correr `npm run typecheck && npm run build && npm run fotos:probar` (verify) y el quickstart §1 a §3 en el navegador, incluida una corrida de un lote grande (~300 fotos, o las que haya) con el tiempo del resumen para SC-005; anotar el resultado en `specs/002-fotos-reales/plan.md` § Verificación — **Parcial (2026-11-06):** hecho con 50 fotos de prueba; lo de fotos de Romi y el lote de 300 pasó a deuda (`docs/tech-debt-tracker.md`)
 - [X] T022 Revisar que `git status` no muestre `manifiestos/`, `salida/`, `.env.local` ni JPEG reales antes de commitear
-- [ ] T023 Quickstart §4 con Romi: la misma tanda en su Pixieset y en `/galeria/ejemplo`, lado a lado (SC-003, SC-004, principio IV). Anotar el resultado en el doc (sección 13, fase 1). Bloquea `status: completed`: si el color no aguanta, se ajusta research R2, se sube `PIPELINE` y se repite.
+- [ ] T023 Quickstart §4 con Romi: la misma tanda en su Pixieset y en `/galeria/ejemplo`, lado a lado (SC-003, SC-004, principio IV). Anotar el resultado en el doc (sección 13, fase 1). Bloquea `status: completed`: si el color no aguanta, se ajusta research R2, se sube `PIPELINE` y se repite. — **Pasó a deuda (2026-11-06)**, ver § Cierre del plan
 
 ## Dependencies & Execution Order
 

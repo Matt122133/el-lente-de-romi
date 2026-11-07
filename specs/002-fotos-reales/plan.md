@@ -1,6 +1,6 @@
 ---
 ticket: none
-status: active
+status: completed
 covers:
   - scripts/fotos/
   - src/
@@ -161,6 +161,13 @@ sin bundler. `ARCHITECTURE.md` se actualiza con el script y el nuevo getter.
 
 La feature no pasa a `completed` hasta que se hace la comparación con
 Pixieset con Romi (T023, principio IV). `verify:` en verde no alcanza.
+
+**Excepción (2026-11-06, pedida por Mateo):** se cierra sin T023 ni la parte
+de T021 con fotos de Romi, porque ella todavía no pasó fotos y la 003 no puede
+esperar. Las dos quedan en `docs/tech-debt-tracker.md` como deuda High. El
+principio IV sigue vigente: hasta saldarla, el sitio solo se muestra con fotos
+de prueba (preview) y no se entrega ninguna galería real ni se pasa a
+producción.
 
 ## Riesgos
 
