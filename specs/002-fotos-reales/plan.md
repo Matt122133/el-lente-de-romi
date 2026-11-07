@@ -192,6 +192,20 @@ Pixieset con Romi (T023, principio IV). `verify:` en verde no alcanza.
     el encabezado y sin botón de .zip.
 - Tiempo con fotos sintéticas de 4 a 8 MP: 30 fotos en 50 s, y 0 s al correr
   de nuevo.
-- **Pendiente** (T021, T023): quickstart §2 contra R2 real (hacen falta los
-  buckets), ~50 fotos reales de Romi, un lote de ~300 para medir SC-005 y la
-  comparación con Pixieset con Romi (§4).
+- Quickstart §2 y §3 contra R2 real (2026-11-06), con 50 fotos de casamientos
+  de Wikimedia Commons (CC0/CC BY/CC BY-SA, ~5 MB promedio, fuera del repo),
+  **no de Romi**. Buckets `el-lente-de-romi-img` (público, `r2.dev`) y
+  `el-lente-de-romi-originales-img` (privado):
+  - `portfolio/social`: 50 fotos en 301 s con subida (215 s solo local);
+    segunda corrida: 50 `↷ ya estaba`;
+  - `galerias/ejemplo`: 50 fotos en 134 s (las derivadas ya estaban), 50
+    originales en el bucket privado; uno bajado de R2 tiene el mismo sha256
+    que el local (SC-006); por la URL `r2.dev` da 404;
+  - sitio con `NEXT_PUBLIC_IMG_HOST` en `r2.dev`: el portfolio pide las 50
+    fotos en AVIF desde R2; la galería cerrada no muestra ningún hash en el
+    HTML; Mateo la revisó en el navegador (grilla, lightbox, galería con
+    contraseña): bien y rápida.
+- **Pendiente** (T021, T023): las mismas pruebas con fotos de Romi, un lote
+  de ~300 suyas para medir SC-005 (a ~4,3 s por foto daría ~21 min con fotos
+  de 5 MB; las suyas pueden pesar más) y la comparación con Pixieset con
+  Romi (§4).
