@@ -1,6 +1,6 @@
 // La forma de una foto y del manifiesto que deja el script de subida (scripts/fotos/).
-// Sin imports: lo carga tanto el sitio como Node directo, sin bundler. En la feature 003
-// cada Foto pasa a ser una fila de la base de datos.
+// Sin imports: lo carga tanto el sitio como Node directo, sin bundler. Cada Foto es una fila
+// de la tabla fotos; el manifiesto queda como caché local del script (research R8 de la 003).
 
 export type Foto = {
   // Nombre de hash del contenido (nunca secuencial, principio VI).
@@ -27,14 +27,10 @@ export type Manifiesto = {
   fotos: Foto[];
 };
 
-// Categorías del portfolio. Es la misma lista que site.categorias; está repetida porque
-// este archivo no puede importar nada.
-const CATEGORIAS = ["social", "moda", "productos", "eventos"];
-
+// Solo el formato: que la categoría o la galería exista lo verifica la base al subir (FR-015
+// de specs/003-base-de-datos-railway). Es el mismo CHECK de la tabla fotos.
 export function destinoValido(destino: string): boolean {
-  const portfolio = /^portfolio\/([a-z]+)$/.exec(destino);
-  if (portfolio) return CATEGORIAS.includes(portfolio[1]);
-  return /^galerias\/[a-z0-9]+(-[a-z0-9]+)*$/.test(destino);
+  return /^(portfolio\/[a-z]+|galerias\/[a-z0-9]+(-[a-z0-9]+)*)$/.test(destino);
 }
 
 export function esGaleria(destino: string): boolean {

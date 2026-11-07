@@ -1,7 +1,9 @@
 // npm run fotos -- --carpeta <ruta> --destino <destino> [--subir] [--salida <ruta>] [--manifiestos <ruta>]
 //
-// Toma una carpeta de JPEG, genera las derivadas de cada foto y deja el manifiesto que lee el
-// sitio. Con --subir, además las sube a R2. Contrato: specs/002-fotos-reales/contracts/cli-fotos.md.
+// Toma una carpeta de JPEG, genera las derivadas de cada foto y deja un manifiesto local. Con
+// --subir, además las sube a R2 y escribe las fotos del destino en la base, que es de donde
+// las lee el sitio. Contratos: specs/002-fotos-reales/contracts/cli-fotos.md y
+// specs/003-base-de-datos-railway/contracts/cli.md.
 
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
@@ -9,6 +11,8 @@ import { dirname, extname, join } from "node:path";
 import { parseArgs } from "node:util";
 import { destinoValido, esGaleria, type Foto, type Manifiesto } from "../../src/lib/fotos.ts";
 import { claveDerivada, claveOriginal, VARIANTES, type Formato, type Variante } from "../../src/lib/imagenes.ts";
+import { conectar, hayBase } from "../db/conexion.ts";
+import { destinoExiste, reemplazarFotos } from "./base.ts";
 import { nombreDeHash, PIPELINE, procesarFoto, type Derivada } from "./pipeline.ts";
 import { buckets, clavesExistentes, subir, variablesFaltantes } from "./r2.ts";
 
@@ -40,10 +44,20 @@ const destino = args.destino.replace(/\/+$/, "");
 if (!destinoValido(destino)) uso(`Destino inválido: ${destino}`);
 if (!existsSync(carpeta)) uso(`No existe la carpeta: ${carpeta}`);
 
-// Sin credenciales no se procesa nada: mejor fallar antes que a mitad del lote.
-if (args.subir) {
+// Sin credenciales no se procesa nada: mejor fallar antes que a mitad del lote. Sin --subir
+// no se toca la base.
+const sql = args.subir ? conectarParaSubir() : null;
+if (sql && !(await destinoExiste(sql, destino))) {
+  await sql.end();
+  console.error(`✗ ${destino} no existe en la base`);
+  process.exit(1);
+}
+
+function conectarParaSubir() {
   const faltan = variablesFaltantes();
+  if (!hayBase()) faltan.push("DATABASE_URL");
   if (faltan.length) uso(`Faltan variables en .env.local: ${faltan.join(", ")}`);
+  return conectar();
 }
 
 const inicio = Date.now();
@@ -181,6 +195,15 @@ console.log(
     `${(bytesDerivadas / 1024 / 1024).toFixed(1)} MB en derivadas · ${segundos} s`,
 );
 console.log(`Manifiesto: ${rutaManifiesto}`);
+
+if (sql) {
+  try {
+    const n = await reemplazarFotos(sql, destino, fotos);
+    console.log(`Base: ${n} fotos en ${destino}`);
+  } finally {
+    await sql.end();
+  }
+}
 
 function derivadasEsperadas(ruta: string): string[] {
   return (Object.keys(VARIANTES) as Variante[]).flatMap((v) =>

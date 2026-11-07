@@ -11,7 +11,7 @@ import { fotosDeMentira } from "@/lib/placeholders";
 import { FormularioClave } from "./FormularioClave";
 
 // Galería de entrega para clientes (fase 3 del roadmap). Ya tiene contraseña y
-// vencimiento; las fotos salen del manifiesto si lo hay, y la descarga de cada foto todavía
+// vencimiento; la galería y sus fotos salen de la base, y la descarga de cada foto todavía
 // es de mentira. Nunca se indexa en Google.
 export const metadata: Metadata = {
   title: "Galería",
@@ -20,9 +20,12 @@ export const metadata: Metadata = {
 
 type Props = { params: Promise<{ slug: string }> };
 
+// Una galería sin fotos en la base muestra placeholders, como la de ejemplo antes de subir.
+const FOTOS_DE_MENTIRA = 40;
+
 export default async function Galeria({ params }: Props) {
   const { slug } = await params;
-  const galeria = getGaleria(slug);
+  const galeria = await getGaleria(slug);
   if (!galeria) notFound();
 
   // Romi avisa que duran un mes y habla con el cliente antes de borrarla (sección 12).
@@ -54,7 +57,7 @@ export default async function Galeria({ params }: Props) {
 
   // Recién acá, con la contraseña ya validada: una galería cerrada no deja ninguna ruta de
   // foto en la página (FR-014).
-  const fotos = getFotos(`galerias/${slug}`, () => fotosDeMentira(slug, galeria.cantidadFotos));
+  const fotos = await getFotos(`galerias/${slug}`, () => fotosDeMentira(slug, FOTOS_DE_MENTIRA));
 
   return (
     <>

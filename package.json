@@ -8,10 +8,14 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "fotos": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/fotos/procesar.ts",
-    "fotos:probar": "node --experimental-strip-types --no-warnings scripts/fotos/probar.ts"
+    "fotos:probar": "node --experimental-strip-types --no-warnings scripts/fotos/probar.ts",
+    "db:migrar": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/db/migrar.ts",
+    "db:sembrar": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/db/sembrar.ts",
+    "db:probar": "node --experimental-strip-types --no-warnings scripts/db/probar.ts"
   },
   "dependencies": {
     "next": "16.4.2",
+    "postgres": "3.4.9",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "thumbhash": "0.1.1"
@@ -25,6 +29,6 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=20.9"
+    "node": ">=22.9"
   }
 }

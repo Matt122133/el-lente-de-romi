@@ -1,39 +1,38 @@
-// Galerías de entrega. Por ahora son de ejemplo y viven acá; en la fase 3 salen de la
-// base de datos y las crea Romi desde su panel.
+// Galerías de entrega, desde la base (specs/003-base-de-datos-railway). Hasta el panel de
+// Romi (004) solo existen las de ejemplo que carga `npm run db:sembrar`. Solo se importa
+// desde código de servidor.
+
+import { connection } from "next/server";
+import { verificarClave } from "@/lib/claves";
+import { db } from "@/lib/db";
 
 export type Galeria = {
   slug: string;
   titulo: string;
   fecha: string; // día del evento, AAAA-MM-DD
   venceEl: string; // duran un mes (sección 12 del doc), AAAA-MM-DD
-  clave: string; // en la DB va hasheada, nunca en texto plano
-  // Cuántas fotos de mentira mostrar mientras la galería no tiene manifiesto.
-  cantidadFotos: number;
-  // El .zip con todas las fotos no pasa por el sitio: Romi se lo pasa al cliente por su
-  // cuenta (sección 0 del doc, 21/10/2026).
+  // La contraseña no viaja con la galería: se compara con claveCorrecta. El .zip con todas
+  // las fotos no pasa por el sitio: Romi se lo pasa al cliente por su cuenta (sección 0 del
+  // doc, 21/10/2026).
 };
 
-const galerias: Galeria[] = [
-  {
-    slug: "ejemplo",
-    titulo: "Galería de ejemplo",
-    fecha: "2026-10-11",
-    venceEl: "2026-11-11",
-    clave: "demo",
-    cantidadFotos: 40,
-  },
-  {
-    slug: "ejemplo-vencida",
-    titulo: "Galería vencida",
-    fecha: "2026-08-02",
-    venceEl: "2026-09-02",
-    clave: "demo",
-    cantidadFotos: 40,
-  },
-];
+// Se arma en cada pedido (research R3): una galería que vence deja de mostrarse sola.
+export async function getGaleria(slug: string): Promise<Galeria | undefined> {
+  await connection();
+  const [galeria] = await db()<Galeria[]>`
+    SELECT slug, titulo,
+           to_char(fecha, 'YYYY-MM-DD') AS fecha,
+           to_char(vence_el, 'YYYY-MM-DD') AS "venceEl"
+    FROM galerias
+    WHERE slug = ${slug}`;
+  return galeria;
+}
 
-export function getGaleria(slug: string): Galeria | undefined {
-  return galerias.find((g) => g.slug === slug);
+// Compara contra el hash guardado (scrypt, research R4); el hash nunca sale de acá.
+export async function claveCorrecta(slug: string, clave: string): Promise<boolean> {
+  const [fila] = await db()<{ clave_hash: string }[]>`
+    SELECT clave_hash FROM galerias WHERE slug = ${slug}`;
+  return fila ? verificarClave(clave, fila.clave_hash) : false;
 }
 
 export function estaVencida(galeria: Galeria, hoy = new Date()): boolean {
