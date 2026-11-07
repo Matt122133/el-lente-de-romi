@@ -21,6 +21,13 @@ The harness model is described in [harness.md](harness.md).
   database, with test data only, shared by `npm run dev`, the scripts and the
   published site (research R5 of feature 003). Without it, pages that read the
   database show the error page.
+- For the panel, also in `.env.local`: `ADMIN_EMAIL`, `ADMIN_CLAVE_HASH` (run
+  `npm run admin:clave` in a real terminal: it hides what you type; in
+  `.env.local` every `$` of the hash must be escaped as `\$`, because Next
+  expands `$NAME` there — the command prints that line too),
+  `SESION_SECRETO`, and to process uploads locally `WORKER_SECRETO` and
+  `WORKER_URL=http://localhost:8080` with `npm run worker` running in another
+  terminal. Uploads from `localhost:3000` need it in the private bucket's CORS.
 
 ## Common commands
 
@@ -29,7 +36,9 @@ The harness model is described in [harness.md](harness.md).
 | Build | `npm run build` |
 | Run locally | `npm run dev` (http://localhost:3000) |
 | Typecheck | `npm run typecheck` |
-| Run tests | `npm run fotos:probar && npm run db:probar` (no runner; no database needed) |
+| Run tests | `npm run fotos:probar && npm run db:probar && npm run panel:probar` (no runner; no database needed) |
+| Run the worker locally | `npm run worker` (port 8080, or `PORT`) |
+| Hash the panel password | `npm run admin:clave` |
 | Migrate the database | `npm run db:migrar` (Railway also runs it before each deploy) |
 | Load example data | `npm run db:sembrar` (categories and the two example galleries) |
 | Upload photos | `npm run fotos -- --carpeta <folder> --destino <portfolio/x\|galerias/x> --subir` |

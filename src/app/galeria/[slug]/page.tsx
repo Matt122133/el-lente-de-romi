@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { BotonWhatsapp } from "@/components/BotonWhatsapp";
 import { JustifiedGrid } from "@/components/JustifiedGrid";
 import { FotoSkeleton } from "@/components/Skeleton";
-import { getFotos } from "@/content/fotos";
+import { fotosPendientes, getFotos } from "@/content/fotos";
 import { estaVencida, formatearFecha, getGaleria } from "@/content/galerias";
 import { firmaValida, nombreCookie } from "@/lib/acceso";
 import { fotosDeMentira } from "@/lib/placeholders";
@@ -43,7 +43,7 @@ export default async function Galeria({ params }: Props) {
   }
 
   const firma = (await cookies()).get(nombreCookie(slug))?.value;
-  if (!firmaValida(slug, firma)) {
+  if (!firmaValida(slug, galeria.claveVersion, firma)) {
     return (
       <section className="seccion contenedor contacto">
         <h1>{galeria.titulo}</h1>
@@ -57,7 +57,21 @@ export default async function Galeria({ params }: Props) {
 
   // Recién acá, con la contraseña ya validada: una galería cerrada no deja ninguna ruta de
   // foto en la página (FR-014).
-  const fotos = await getFotos(`galerias/${slug}`, () => fotosDeMentira(slug, FOTOS_DE_MENTIRA));
+  const destino = `galerias/${slug}`;
+  const fotos = await getFotos(destino, () => []);
+
+  // Subida desde el panel y todavía sin ninguna foto lista: un aviso, no placeholders.
+  if (fotos.length === 0 && (await fotosPendientes(destino)) > 0) {
+    return (
+      <section className="seccion contenedor contacto">
+        <h1>{galeria.titulo}</h1>
+        <p className="texto-suave" style={{ margin: 0 }}>
+          Esta galería se está preparando. Volvé a entrar en unos minutos.
+        </p>
+      </section>
+    );
+  }
+  const visibles = fotos.length ? fotos : fotosDeMentira(slug, FOTOS_DE_MENTIRA);
 
   return (
     <>
@@ -69,12 +83,12 @@ export default async function Galeria({ params }: Props) {
           <div>
             <h1>{galeria.titulo}</h1>
             <p>
-              {formatearFecha(galeria.fecha)} · {fotos.length} fotos · Disponible
+              {formatearFecha(galeria.fecha)} · {visibles.length} fotos · Disponible
               hasta el {formatearFecha(galeria.venceEl)}
             </p>
           </div>
         </div>
-        <JustifiedGrid fotos={fotos} descargable />
+        <JustifiedGrid fotos={visibles} descargable />
       </div>
     </>
   );

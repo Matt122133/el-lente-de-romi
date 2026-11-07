@@ -11,21 +11,25 @@
     "fotos:probar": "node --experimental-strip-types --no-warnings scripts/fotos/probar.ts",
     "db:migrar": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/db/migrar.ts",
     "db:sembrar": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/db/sembrar.ts",
-    "db:probar": "node --experimental-strip-types --no-warnings scripts/db/probar.ts"
+    "db:probar": "node --experimental-strip-types --no-warnings scripts/db/probar.ts",
+    "worker": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/worker/index.ts",
+    "admin:clave": "node --experimental-strip-types --no-warnings scripts/admin/clave.ts",
+    "panel:probar": "node --experimental-strip-types --no-warnings scripts/panel/probar.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1155.0",
+    "@aws-sdk/s3-request-presigner": "3.1155.0",
     "next": "16.4.2",
     "postgres": "3.4.9",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "sharp": "^0.35.5",
     "thumbhash": "0.1.1"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.1155.0",
     "@types/node": "^22.20.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "sharp": "^0.35.5",
     "typescript": "^5.9.3"
   },
   "engines": {

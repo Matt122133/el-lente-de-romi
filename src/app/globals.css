@@ -574,3 +574,132 @@ h2 {
 .lightbox-siguiente {
   right: 4px;
 }
+
+/* ---------- Panel de Romi (specs/004-panel-de-romi) ---------- */
+
+.panel {
+  padding-bottom: 56px;
+}
+
+.panel-barra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-borde);
+  font-size: 0.85rem;
+}
+
+.panel-enlace {
+  padding: 0;
+  font: inherit;
+  color: var(--color-texto-suave);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.panel-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0 24px;
+}
+
+.panel-encabezado h1 {
+  margin: 0;
+}
+
+.panel-acciones {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.panel-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-lista li a {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.panel-lista .texto-suave {
+  grid-column: 1;
+  font-size: 0.85rem;
+}
+
+.panel-estado {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+.panel-estado-por-vencer {
+  color: var(--color-texto);
+}
+
+.panel-estado-vencida {
+  color: var(--color-error);
+}
+
+.panel-seccion {
+  display: grid;
+  gap: 16px;
+  padding: 32px 0;
+  border-top: 1px solid var(--color-borde);
+}
+
+.panel-soltar {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: 48px 16px;
+  text-align: center;
+  border: 1px dashed var(--color-borde);
+}
+
+.panel-soltar-encima {
+  border-color: var(--color-texto);
+}
+
+.panel-progreso {
+  display: grid;
+  gap: 8px;
+}
+
+.panel-progreso progress {
+  width: 100%;
+}
+
+.panel-errores {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+.panel-errores li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.boton-peligro {
+  background: var(--color-error);
+}

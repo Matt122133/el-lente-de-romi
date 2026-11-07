@@ -2,7 +2,10 @@
 // derivadas y el privado con los originales de las galerías (research R5, sección 0 del
 // doc). Las credenciales salen de .env.local, nunca del repo.
 
-import { ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+
+// Las derivadas no cambian nunca: el nombre sale del contenido y del PIPELINE.
+export const CACHE_DERIVADAS = "public, max-age=31536000, immutable";
 
 const VARIABLES = [
   "R2_ACCOUNT_ID",
@@ -65,4 +68,11 @@ export async function subir(
       CacheControl: cacheControl,
     }),
   );
+}
+
+// Lo usa el worker del panel para leer el original (specs/004-panel-de-romi, research R5).
+export async function bajar(bucket: string, clave: string): Promise<Buffer> {
+  const r = await r2().send(new GetObjectCommand({ Bucket: bucket, Key: clave }));
+  if (!r.Body) throw new Error(`R2 no devolvió ${clave}`);
+  return Buffer.from(await r.Body.transformToByteArray());
 }
