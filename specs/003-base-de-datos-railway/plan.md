@@ -180,4 +180,27 @@ que `src/lib/fotos.ts` en la 002.
 
 ## Verificación
 
-Pendiente.
+- `verify:` verde (2026-11-06): typecheck, build (con `.next` limpio; `/`,
+  `/portfolio`, `/portfolio/[categoria]` y `/galeria/[slug]` quedan dinámicas
+  y el build no toca la base), `fotos:probar` y `db:probar` → `OK`.
+- Railway: app `el-lente-de-romi` desde la rama `003-base-de-datos-railway`
+  y Postgres con volumen y backups disponibles en Hobby (R6: no hace falta el
+  script de respaldo). Mateo puso la app en modo serverless (se apaga sin
+  tráfico: la primera visita después de dormir tarda más).
+- Quickstart §2: `db:migrar` → `✓ 001-inicial.sql`, otra vez `Base al día`;
+  `db:sembrar` dos veces → 4 categorías y 2 galerías, sin duplicar; la clave
+  guardada es `scrypt$32768$8$…`.
+- Quickstart §3: 50 fotos de prueba a `portfolio/social` y a
+  `galerias/ejemplo` → `Base: 50 fotos`; `galerias/no-existe` → código 1 y
+  nada en ningún bucket; 5 y después 3 a `portfolio/moda` → quedan 3 (después
+  se borraron a mano para que `moda` siga con placeholders); sin `--subir`
+  no se conecta a la base.
+- Quickstart §4 en `el-lente-de-romi-production.up.railway.app` (deploy
+  `07f69bd`): todas las páginas 200 en 0,4–1,3 s; `/portfolio/no-existe` y
+  `/galeria/no-existe` 404; `/portfolio/social` con 50 fotos de `r2.dev` y
+  ninguna imagen servida por Railway; galería cerrada sin hashes y con
+  `noindex, nofollow`; vencida con su fecha; categorías desde la base en el
+  mismo orden.
+- **Pendiente**: contraseña `demo` en el navegador (§4.3), base apagada
+  (§4.8), merge a `master` con deploy automático (§4.7), restaurar un backup
+  (§5) y el consumo en *Usage* (SC-004).

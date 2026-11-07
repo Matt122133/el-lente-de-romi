@@ -24,8 +24,8 @@ el agente no puede ni debe hacer en la cuenta.
 - [X] T007 Crear `scripts/db/sembrar.ts` según `contracts/cli.md` § db:sembrar: upsert de las 4 categorías (mismos slug, nombre y descripción que hoy en `src/content/site.ts`, con `orden`) y de `ejemplo` (vence un año después de hoy) y `ejemplo-vencida` (`2026-09-02`), ambas con `hashearClave("demo")`
 - [X] T008 [P] Crear `src/lib/db.ts`: cliente único del sitio, con un comentario de que solo se importa desde código de servidor, reutilizado entre recargas de `next dev` vía `globalThis`
 - [X] T009 Crear `scripts/db/probar.ts` según `contracts/cli.md` § db:probar (claves, orden de migraciones, `destinoValido`, armado de filas de `fotos`). Las funciones puras viven en módulos sin efectos al importarlos: `scripts/db/migraciones.ts` (listar y ordenar los `.sql`, que usa `migrar.ts`) y `scripts/fotos/base.ts` (armar las filas y escribirlas en la base, que usa `procesar.ts` en T014)
-- [ ] T010 **(Mateo)** Quickstart §1: proyecto en Railway con la app desde GitHub (`master`) y Postgres en la misma región, variables `DATABASE_URL` (referencia), `GALERIAS_SECRETO`, `NEXT_PUBLIC_IMG_HOST`; TCP proxy y URL pública en `.env.local`; dominio `*.up.railway.app`. Anotar en el plan la región elegida y si Hobby tiene backups programados
-- [ ] T011 Quickstart §2: `npm run db:migrar` y `npm run db:sembrar` dos veces cada uno contra la base de Railway
+- [X] T010 **(Mateo)** Quickstart §1: proyecto en Railway con la app desde GitHub (`master`) y Postgres en la misma región, variables `DATABASE_URL` (referencia), `GALERIAS_SECRETO`, `NEXT_PUBLIC_IMG_HOST`; TCP proxy y URL pública en `.env.local`; dominio `*.up.railway.app`. Anotar en el plan la región elegida y si Hobby tiene backups programados
+- [X] T011 Quickstart §2: `npm run db:migrar` y `npm run db:sembrar` dos veces cada uno contra la base de Railway
 
 **Checkpoint**: la base existe, migrada y con los datos de ejemplo.
 
@@ -42,7 +42,7 @@ el agente no puede ni debe hacer en la cuenta.
 - [X] T014 [US1] `scripts/fotos/procesar.ts`: con `--subir`, exigir `DATABASE_URL` junto a las variables de R2; antes de listar R2, verificar que la categoría o la galería exista (FR-015, `contracts/cli.md`); al terminar, en una transacción (función de `scripts/fotos/base.ts`), borrar las fotos del destino e insertar la lista nueva, e imprimir `Base: N fotos en <destino>`. Sin `--subir`, no conectarse. El manifiesto se sigue escribiendo
 - [X] T015 [US1] `src/app/portfolio/[categoria]/page.tsx`: sacar `generateStaticParams` y `dynamicParams` (research R3), `await getFotos(...)`; slug inexistente → `notFound()`
 - [X] T016 [US1] `src/app/galeria/[slug]/page.tsx`: `await getFotos(...)` solo después de verificar la cookie, como hoy
-- [ ] T017 [US1] Quickstart §3 (pasos 1–6) con `npm run dev` y `.env.local` apuntando a Railway
+- [X] T017 [US1] Quickstart §3 (pasos 1–6) con `npm run dev` y `.env.local` apuntando a Railway
 
 **Checkpoint**: US1 funciona en local contra la base real.
 
