@@ -138,15 +138,13 @@ scripts/worker/index.ts           # servidor HTTP privado + cola (R5)
 scripts/worker/cola.ts            # tomar, liberar colgadas, marcar lista/error (sin efectos al importar)
 scripts/admin/clave.ts            # npm run admin:clave
 scripts/panel/probar.ts           # npm run panel:probar
-railway.worker.json               # start npm run worker, sin build de Next ni preDeploy
 package.json, .env.example, ARCHITECTURE.md, SECURITY.md, docs/processes/dev-setup.md
 ```
 
 **Structure Decision**: el panel vive en `src/app/panel/` como cualquier
 ruta; el worker en `scripts/worker/`, al lado del script de fotos, porque
-importa su pipeline. `railway.json` sigue siendo de la app; el worker usa
-`railway.worker.json` (config-as-code por servicio, la elige Mateo en el
-servicio).
+importa su pipeline. `railway.json` sigue siendo de la app; el worker se
+configura con variables del servicio (ver § Cierre).
 
 ## Decisiones de diseño
 
@@ -171,4 +169,44 @@ servicio).
 
 ## Verificación
 
-Pendiente.
+- `verify:` verde (2026-11-07): typecheck, build (panel y proxy en la tabla de
+  rutas), `fotos:probar`, `db:probar`, `panel:probar`.
+- Local: sin sesión o con cookie falsa, todo `/panel/*` redirige al login;
+  `/panel/entrar` con `noindex`; el sitio no enlaza al panel. Mateo probó
+  login, crear galería, lista, cambiar clave y borrar.
+- 50 fotos subidas desde el panel a `galerias/ejemplo`: 50 listas en orden
+  natural, el original bajado de R2 igual byte por byte al local (SC-003) y
+  las 8 derivadas de una foto **idénticas** a las que generó el script de la
+  002 con la misma foto (SC-002).
+- Railway (8 vCPU, 4 fotos a la vez): las 50 fotos (276 MB) subieron en ~1
+  min a ~55 Mbit/s; el worker las dejó listas en 2 min 25 s (~2,9 s por foto,
+  12,5 s cada una con 4 a la vez), memoria máxima 4,4 GB de 8. Proyección a
+  300 fotos: ~15 min (SC-001 cumple con margen).
+- Pendiente de medir con uso real: consumo en *Usage* (SC-006) y 300 fotos
+  de Romi (deuda High de la 002).
+
+## Cierre (2026-11-07)
+
+Desvíos respecto del diseño, encontrados al probar en Railway:
+
+- **sharp con todos los núcleos**: en Linux con glibc arranca con 1 hilo por
+  imagen; en Railway una foto tardaba 30–67 s. El worker llama a
+  `sharp.concurrency(availableParallelism())`.
+- **Worker sin config-as-code**: Railway no tomó `railway.worker.json` (se
+  borró). El servicio usa `RAILPACK_START_CMD=npm run worker`,
+  `RAILPACK_BUILD_CMD` (sin build de Next), `WORKER_PARALELO=4`, 8 vCPU y 8 GB,
+  sin dominio público y sin modo serverless.
+- **La cola se revisa cada 10 s** además del aviso de la app (research R5 no
+  lo hacía para que el worker pudiera dormir): el aviso por la red privada no
+  llega (0 avisos recibidos en la última prueba). Como el worker está siempre
+  prendido, no cuesta más. Queda en deuda Low.
+- **Subidas fallidas**: el navegador aborta el multipart y borra la fila, y
+  una `subiendo` de más de una hora deja de contar como pendiente.
+- **Hash en `.env.local`**: Next expande los `$`; `admin:clave` imprime la
+  línea escapada.
+- Las dos primeras mediciones en Railway las hizo, sin querer, un worker
+  local que seguía corriendo contra la misma base: más razones para la deuda
+  de separar la base de desarrollo.
+
+Antes de darle el panel a Romi: cambiar `ADMIN_EMAIL` (hoy es el de Mateo) y
+generar su contraseña con `npm run admin:clave`.
