@@ -7,6 +7,8 @@
 
 import { createServer } from "node:http";
 import { timingSafeEqual } from "node:crypto";
+import { availableParallelism } from "node:os";
+import sharp from "sharp";
 import { claveOriginal } from "../../src/lib/imagenes.ts";
 import { conectar } from "../db/conexion.ts";
 import { nombreDeHash, procesarFoto } from "../fotos/pipeline.ts";
@@ -26,6 +28,14 @@ if (faltan.length) {
 const EN_PARALELO = Math.max(1, Number(process.env.WORKER_PARALELO ?? 3));
 
 const sql = conectar(EN_PARALELO + 1);
+
+// En Linux con glibc sharp arranca con 1 hilo por imagen (para cuidar la memoria): en Railway
+// una foto tardaba 30 s contra 4 s en Windows. Con los núcleos del contenedor vuelve a ser rápido.
+sharp.concurrency(availableParallelism());
+
+// Además del aviso de la app, el worker mira la cola cada tanto: si el aviso por la red privada
+// no llega, las fotos se procesan igual. Está siempre prendido, así que no cuesta más.
+const REVISAR_CADA_MS = 10_000;
 const SECRETO = Buffer.from(`Bearer ${process.env.WORKER_SECRETO}`);
 
 async function procesar(t: Trabajo): Promise<void> {
@@ -90,6 +100,7 @@ const servidor = createServer((req, res) => {
       return;
     }
     res.writeHead(202).end();
+    console.log("aviso de la app");
     void vaciarCola();
     return;
   }
@@ -103,6 +114,9 @@ const servidor = createServer((req, res) => {
 const puerto = Number(process.env.PORT ?? 8080);
 // "::" escucha en IPv6 y IPv4: la red privada de Railway es IPv6.
 servidor.listen(puerto, "::", () => {
-  console.log(`Worker escuchando en ${puerto}, ${EN_PARALELO} fotos a la vez`);
+  console.log(
+    `Worker escuchando en ${puerto}, ${EN_PARALELO} fotos a la vez, sharp con ${sharp.concurrency()} hilos`,
+  );
   void vaciarCola();
+  setInterval(() => void vaciarCola(), REVISAR_CADA_MS);
 });

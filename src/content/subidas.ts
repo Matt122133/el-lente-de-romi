@@ -104,7 +104,9 @@ export async function despertarWorker(): Promise<void> {
       headers: { authorization: `Bearer ${process.env.WORKER_SECRETO ?? ""}` },
       signal: AbortSignal.timeout(3000),
     });
-  } catch {
-    // Dormido o arrancando: Railway lo levanta con este mismo pedido.
+  } catch (e) {
+    // No es grave: el worker igual revisa la cola cada 10 s. Queda en el log para verlo.
+    const causa = (e as Error & { cause?: { code?: string } }).cause?.code ?? (e as Error).message;
+    console.warn(`No se pudo avisar al worker (${url}): ${causa}`);
   }
 }
