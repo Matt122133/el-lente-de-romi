@@ -20,7 +20,12 @@ if (faltan.length) {
   process.exit(1);
 }
 
-const sql = conectar();
+// Fotos a la vez. Cada una usa varios núcleos (sharp), pero de a una el procesador quedaba
+// esperando entre la bajada del original y la subida de las derivadas. Medido en Railway:
+// 7,7 s por foto de a una (specs/004-panel-de-romi, § Verificación).
+const EN_PARALELO = Math.max(1, Number(process.env.WORKER_PARALELO ?? 3));
+
+const sql = conectar(EN_PARALELO + 1);
 const SECRETO = Buffer.from(`Bearer ${process.env.WORKER_SECRETO}`);
 
 async function procesar(t: Trabajo): Promise<void> {
@@ -49,17 +54,22 @@ async function vaciarCola(): Promise<void> {
       otraVuelta = false;
       const liberadas = await liberarColgadas(sql);
       if (liberadas) console.log(`↻ ${liberadas} fotos colgadas vuelven a la cola`);
-      for (let t = await tomarSiguiente(sql); t; t = await tomarSiguiente(sql)) {
-        const inicio = Date.now();
-        try {
-          await procesar(t);
-          console.log(`✓ ${t.destino}/${t.id} en ${Date.now() - inicio} ms`);
-        } catch (e) {
-          const mensaje = (e as Error).message;
-          console.error(`✗ ${t.destino}/${t.id}: ${mensaje}`);
-          await marcarError(sql, t, mensaje);
-        }
-      }
+      // Cada carril toma la siguiente foto libre hasta que no queden (SKIP LOCKED).
+      await Promise.all(
+        Array.from({ length: EN_PARALELO }, async () => {
+          for (let t = await tomarSiguiente(sql); t; t = await tomarSiguiente(sql)) {
+            const inicio = Date.now();
+            try {
+              await procesar(t);
+              console.log(`✓ ${t.destino}/${t.id} en ${Date.now() - inicio} ms`);
+            } catch (e) {
+              const mensaje = (e as Error).message;
+              console.error(`✗ ${t.destino}/${t.id}: ${mensaje}`);
+              await marcarError(sql, t, mensaje);
+            }
+          }
+        }),
+      );
     } while (otraVuelta);
   } catch (e) {
     console.error(`✗ cola: ${(e as Error).message}`);
@@ -93,6 +103,6 @@ const servidor = createServer((req, res) => {
 const puerto = Number(process.env.PORT ?? 8080);
 // "::" escucha en IPv6 y IPv4: la red privada de Railway es IPv6.
 servidor.listen(puerto, "::", () => {
-  console.log(`Worker escuchando en ${puerto}`);
+  console.log(`Worker escuchando en ${puerto}, ${EN_PARALELO} fotos a la vez`);
   void vaciarCola();
 });
