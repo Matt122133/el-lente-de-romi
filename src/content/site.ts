@@ -1,5 +1,9 @@
-// Contenido del sitio. Por ahora vive acá; cuando haya base de datos, sale de ahí
-// (ver sección 9 del doc). Los textos entre corchetes están pendientes de Romi.
+// Contenido del sitio. Las categorías del portfolio ya salen de la base (feature 003); el
+// resto vive acá hasta que tenga panel (ver sección 9 del doc). Los textos entre corchetes
+// están pendientes de Romi.
+
+import { connection } from "next/server";
+import { db } from "@/lib/db";
 
 export type Categoria = {
   slug: string;
@@ -13,28 +17,6 @@ export const site = {
   descripcion:
     "Fotografía social, de moda, de productos y cobertura de eventos y congresos.",
 
-  categorias: [
-    {
-      slug: "social",
-      nombre: "Fotografía social",
-      descripcion: "[Casamientos, cumpleaños, quinces y celebraciones]",
-    },
-    {
-      slug: "moda",
-      nombre: "Fotografía de moda",
-      descripcion: "[Editoriales, lookbooks y campañas]",
-    },
-    {
-      slug: "productos",
-      nombre: "Fotografía de productos",
-      descripcion: "[Catálogos y contenido para marcas]",
-    },
-    {
-      slug: "eventos",
-      nombre: "Eventos y congresos",
-      descripcion: "[Eventos sociales, culturales y corporativos]",
-    },
-  ] satisfies Categoria[],
 
   sobreMi: {
     titulo: "Sobre mí",
@@ -53,8 +35,17 @@ export const site = {
   },
 };
 
-export function getCategoria(slug: string): Categoria | undefined {
-  return site.categorias.find((c) => c.slug === slug);
+// Se arman en cada pedido, como getFotos (research R3 de la 003).
+export async function getCategorias(): Promise<Categoria[]> {
+  await connection();
+  return [...(await db()<Categoria[]>`SELECT slug, nombre, descripcion FROM categorias ORDER BY orden`)];
+}
+
+export async function getCategoria(slug: string): Promise<Categoria | undefined> {
+  await connection();
+  const [categoria] = await db()<Categoria[]>`
+    SELECT slug, nombre, descripcion FROM categorias WHERE slug = ${slug}`;
+  return categoria;
 }
 
 export function whatsappUrl(): string | null {

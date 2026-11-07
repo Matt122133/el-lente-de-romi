@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getGaleria } from "@/content/galerias";
+import { claveCorrecta, getGaleria } from "@/content/galerias";
 import { firmar, nombreCookie } from "@/lib/acceso";
 
 export type EstadoClave = { error: string | null };
@@ -12,10 +12,11 @@ export async function entrarConClave(
   _previo: EstadoClave,
   datos: FormData,
 ): Promise<EstadoClave> {
-  const galeria = getGaleria(slug);
+  const galeria = await getGaleria(slug);
   if (!galeria) return { error: "Esta galería no existe." };
 
-  if (datos.get("clave") !== galeria.clave) {
+  const clave = datos.get("clave");
+  if (typeof clave !== "string" || !(await claveCorrecta(slug, clave))) {
     return { error: "La contraseña no es correcta." };
   }
 

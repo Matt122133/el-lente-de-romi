@@ -3,10 +3,12 @@ import { BotonWhatsapp } from "@/components/BotonWhatsapp";
 import { CategoriaCard } from "@/components/CategoriaCard";
 import { JustifiedGrid } from "@/components/JustifiedGrid";
 import { FotoSkeleton, TextoSkeleton } from "@/components/Skeleton";
-import { site } from "@/content/site";
+import { getCategorias, site } from "@/content/site";
 import { fotosDeMentira } from "@/lib/placeholders";
 
-export default function Home() {
+export default async function Home() {
+  const categorias = await getCategorias();
+
   return (
     <>
       <section className="hero">
@@ -20,7 +22,7 @@ export default function Home() {
       <section className="seccion contenedor">
         <h2 className="seccion-titulo">Portfolio</h2>
         <div className="categorias">
-          {site.categorias.map((c) => (
+          {categorias.map((c) => (
             <CategoriaCard key={c.slug} categoria={c} />
           ))}
         </div>

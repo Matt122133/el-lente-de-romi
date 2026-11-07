@@ -12,10 +12,15 @@ The harness model is described in [harness.md](harness.md).
 
 ## Toolchain
 
-- Node 20.9 or later (`engines` in `package.json`), npm.
+- Node 22.9 or later (`engines` in `package.json`), npm.
 - Python 3.9+ for the harness scripts (stdlib only, nothing to install).
 - The `specify` CLI (spec-kit 0.14.2) only to regenerate spec-kit files.
 - Per clone, once: `npm install` and `git config core.hooksPath .githooks`.
+- `.env.local` from `.env.example`. `DATABASE_URL` is the **public** (TCP
+  proxy) URL of the Railway Postgres: until feature 004 there is a single
+  database, with test data only, shared by `npm run dev`, the scripts and the
+  published site (research R5 of feature 003). Without it, pages that read the
+  database show the error page.
 
 ## Common commands
 
@@ -24,11 +29,14 @@ The harness model is described in [harness.md](harness.md).
 | Build | `npm run build` |
 | Run locally | `npm run dev` (http://localhost:3000) |
 | Typecheck | `npm run typecheck` |
-| Run tests | none yet — the first feature that needs them adds the runner |
+| Run tests | `npm run fotos:probar && npm run db:probar` (no runner; no database needed) |
+| Migrate the database | `npm run db:migrar` (Railway also runs it before each deploy) |
+| Load example data | `npm run db:sembrar` (categories and the two example galleries) |
+| Upload photos | `npm run fotos -- --carpeta <folder> --destino <portfolio/x\|galerias/x> --subir` |
 | Format | none configured |
 | Lint | none configured |
 
-Example galleries to try locally: `/galeria/ejemplo` and
+Example galleries to try locally (after `db:sembrar`): `/galeria/ejemplo` and
 `/galeria/ejemplo-vencida`, password `demo`.
 
 ## Plan-coverage check
