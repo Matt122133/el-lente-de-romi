@@ -67,7 +67,8 @@ export async function listarGalerias(): Promise<GaleriaEnPanel[]> {
              to_char(g.vence_el, 'YYYY-MM-DD') AS "venceEl",
              g.clave_version AS "claveVersion",
              count(f.id) FILTER (WHERE f.estado = 'lista')::int AS fotos,
-             count(f.id) FILTER (WHERE f.estado IN ('subiendo', 'subida', 'procesando'))::int AS pendientes,
+             count(f.id) FILTER (WHERE f.estado IN ('subida', 'procesando')
+               OR (f.estado = 'subiendo' AND f.cambiada > now() - interval '1 hour'))::int AS pendientes,
              count(f.id) FILTER (WHERE f.estado = 'error')::int AS errores
       FROM galerias g
       LEFT JOIN fotos f ON f.destino = 'galerias/' || g.slug

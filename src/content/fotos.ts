@@ -5,6 +5,7 @@
 import { connection } from "next/server";
 import { db } from "@/lib/db";
 import type { Foto } from "@/lib/fotos";
+import { pendiente } from "./subidas";
 
 export async function getFotos(destino: string, respaldo: () => Foto[]): Promise<Foto[]> {
   // Se arma en cada pedido: el build no tiene acceso a la base, y lo que se sube se ve al
@@ -24,6 +25,6 @@ export async function fotosPendientes(destino: string): Promise<number> {
   await connection();
   const [{ n }] = await db()<{ n: number }[]>`
     SELECT count(*)::int AS n FROM fotos
-    WHERE destino = ${destino} AND estado IN ('subiendo', 'subida', 'procesando')`;
+    WHERE destino = ${destino} AND ${pendiente()}`;
   return n;
 }

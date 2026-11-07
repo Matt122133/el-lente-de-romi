@@ -9,7 +9,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { idDeFoto } from "@/lib/idFoto";
 import { ordenNatural } from "@/lib/orden";
-import { avance, empezarSubida, reintentar, terminarSubida, type SubidaNueva } from "./acciones";
+import {
+  abandonarSubida,
+  avance,
+  empezarSubida,
+  reintentar,
+  terminarSubida,
+  type SubidaNueva,
+} from "./acciones";
 import type { Avance } from "@/content/subidas";
 
 const TAMANO_PARTE = 8 * 1024 * 1024; // el mismo que src/lib/r2.ts
@@ -120,8 +127,10 @@ export function Subida({ slug, avanceInicial }: { slug: string; avanceInicial: A
         const archivo = porId.get(nueva.id)!;
         try {
           await subirFoto(slug, archivo, nueva);
-        } catch {
+        } catch (e) {
+          console.error(`${archivo.name}:`, e);
           p.fallidas.push(archivo.name);
+          await abandonarSubida(slug, nueva.id, nueva.uploadId).catch(() => {});
         }
         p.hechas++;
         avisar();

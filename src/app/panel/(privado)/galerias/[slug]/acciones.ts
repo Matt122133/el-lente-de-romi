@@ -11,6 +11,7 @@ import {
   despertarWorker,
   estadosDe,
   marcarSubida,
+  olvidarSubida,
   registrarSubiendo,
   reintentarFoto,
   reordenar,
@@ -18,7 +19,14 @@ import {
 } from "@/content/subidas";
 import { exigirSesion } from "@/lib/exigirSesion";
 import { claveOriginal } from "@/lib/imagenes";
-import { buckets, cantidadDePartes, completarMultipart, empezarMultipart, firmarPartes } from "@/lib/r2";
+import {
+  abortarMultipart,
+  buckets,
+  cantidadDePartes,
+  completarMultipart,
+  empezarMultipart,
+  firmarPartes,
+} from "@/lib/r2";
 
 const ID = /^[0-9a-f]{32}$/;
 const MAXIMO_BYTES = 200 * 1024 * 1024;
@@ -78,6 +86,19 @@ export async function terminarSubida(
   await completarMultipart(buckets().originales, claveOriginal(`${destino}/${id}`), uploadId, partes);
   await marcarSubida(destino, id);
   await despertarWorker();
+}
+
+// El navegador no pudo subirla: se aborta el multipart y se borra la fila, así no queda
+// "subiendo" para siempre y volver a soltar la carpeta la sube de nuevo.
+export async function abandonarSubida(slug: string, id: string, uploadId: string): Promise<void> {
+  const { destino } = await galeriaExistente(slug);
+  if (!ID.test(id)) throw new Error("Id inválido");
+  try {
+    await abortarMultipart(buckets().originales, claveOriginal(`${destino}/${id}`), uploadId);
+  } catch {
+    // Ya abortado o vencido: R2 lo limpia solo.
+  }
+  await olvidarSubida(destino, id);
 }
 
 export async function reintentar(slug: string, id: string): Promise<void> {

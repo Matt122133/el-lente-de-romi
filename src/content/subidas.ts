@@ -5,6 +5,13 @@
 import { db } from "@/lib/db";
 import { ordenNatural } from "@/lib/orden";
 
+// Pendiente = el worker la va a procesar, o el navegador la está subiendo. Una "subiendo" de
+// hace más de una hora es una pestaña que se cerró a mitad: ya no cuenta.
+export const pendiente = () =>
+  db().unsafe(
+    "(estado IN ('subida', 'procesando') OR (estado = 'subiendo' AND cambiada > now() - interval '1 hour'))",
+  );
+
 export type EstadoFoto = "subiendo" | "subida" | "procesando" | "lista" | "error";
 
 export async function estadosDe(destino: string, ids: string[]): Promise<Map<string, EstadoFoto>> {
@@ -59,6 +66,11 @@ export async function marcarSubida(destino: string, id: string): Promise<void> {
     WHERE destino = ${destino} AND id = ${id} AND estado = 'subiendo'`;
 }
 
+// Una subida que falló en el navegador: la fila desaparece y la foto se puede volver a subir.
+export async function olvidarSubida(destino: string, id: string): Promise<void> {
+  await db()`DELETE FROM fotos WHERE destino = ${destino} AND id = ${id} AND estado = 'subiendo'`;
+}
+
 export async function reintentarFoto(destino: string, id: string): Promise<void> {
   await db()`
     UPDATE fotos SET estado = 'subida', error = NULL, cambiada = now()
@@ -74,7 +86,7 @@ export type Avance = {
 export async function avanceDe(destino: string): Promise<Avance> {
   const [conteo] = await db()<{ listas: number; pendientes: number }[]>`
     SELECT count(*) FILTER (WHERE estado = 'lista')::int AS listas,
-           count(*) FILTER (WHERE estado IN ('subiendo', 'subida', 'procesando'))::int AS pendientes
+           count(*) FILTER (WHERE ${pendiente()})::int AS pendientes
     FROM fotos WHERE destino = ${destino}`;
   const errores = await db()<Avance["errores"]>`
     SELECT id, nombre, error FROM fotos WHERE destino = ${destino} AND estado = 'error' ORDER BY nombre`;
