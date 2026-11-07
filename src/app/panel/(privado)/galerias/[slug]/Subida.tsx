@@ -20,11 +20,21 @@ import {
 import type { Avance } from "@/content/subidas";
 
 const TAMANO_PARTE = 8 * 1024 * 1024; // el mismo que src/lib/r2.ts
-const TANDA = 20;
-const EN_PARALELO = 4;
+// Tandas chicas y una sola por delante de la que sube: las URLs firmadas vencen a los 15
+// minutos y no tienen que esperar en cola.
+const TANDA = 10;
+const EN_PARALELO = 6;
 const REINTENTOS_PARTE = 3;
 
-type Progreso = { total: number; hechas: number; ya: number; salteadas: string[]; fallidas: string[] };
+type Progreso = {
+  total: number;
+  hechas: number;
+  ya: number;
+  bytes: number;
+  segundos: number;
+  salteadas: string[];
+  fallidas: string[];
+};
 
 const esJpeg = (f: File) => /\.jpe?g$/i.test(f.name) || f.type === "image/jpeg";
 
@@ -72,13 +82,20 @@ async function subirFoto(slug: string, archivo: File, nueva: SubidaNueva): Promi
   await terminarSubida(slug, nueva.id, nueva.uploadId, partes);
 }
 
-async function enParalelo<T>(items: T[], tarea: (item: T) => Promise<void>): Promise<void> {
-  const cola = [...items];
-  await Promise.all(
-    Array.from({ length: EN_PARALELO }, async () => {
-      for (let item = cola.shift(); item !== undefined; item = cola.shift()) await tarea(item);
-    }),
-  );
+// Como mucho EN_PARALELO subidas a la vez, compartidas entre tandas.
+function limitador(maximo: number) {
+  let activas = 0;
+  const esperando: Array<() => void> = [];
+  return async (tarea: () => Promise<void>) => {
+    while (activas >= maximo) await new Promise<void>((ok) => esperando.push(ok));
+    activas++;
+    try {
+      await tarea();
+    } finally {
+      activas--;
+      esperando.shift()?.();
+    }
+  };
 }
 
 export function Subida({ slug, avanceInicial }: { slug: string; avanceInicial: Avance }) {
@@ -103,17 +120,37 @@ export function Subida({ slug, avanceInicial }: { slug: string; avanceInicial: A
   async function subir(todos: File[]) {
     const salteadas = todos.filter((f) => !esJpeg(f)).map((f) => f.name);
     const jpegs = todos.filter(esJpeg).sort((a, b) => ordenNatural(a.name, b.name));
-    const p: Progreso = { total: jpegs.length, hechas: 0, ya: 0, salteadas, fallidas: [] };
-    const avisar = () => setProgreso({ ...p });
+    const p: Progreso = { total: jpegs.length, hechas: 0, ya: 0, bytes: 0, segundos: 0, salteadas, fallidas: [] };
+    const inicio = Date.now();
+    const avisar = () => setProgreso({ ...p, segundos: (Date.now() - inicio) / 1000 });
+    const conLugar = limitador(EN_PARALELO);
     setSubiendo(true);
     avisar();
 
+    const subirUna = async (archivo: File, nueva: SubidaNueva) => {
+      try {
+        await subirFoto(slug, archivo, nueva);
+        p.bytes += archivo.size;
+      } catch (e) {
+        console.error(`${archivo.name}:`, e);
+        p.fallidas.push(archivo.name);
+        await abandonarSubida(slug, nueva.id, nueva.uploadId).catch(() => {});
+      }
+      p.hechas++;
+      avisar();
+    };
+
+    // Mientras sube una tanda se prepara la siguiente (ids y URLs firmadas), así la conexión
+    // no queda parada entre tandas.
+    let anterior: Promise<unknown> = Promise.resolve();
+    let actual: Promise<unknown> = Promise.resolve();
     for (let i = 0; i < jpegs.length; i += TANDA) {
       const tanda = jpegs.slice(i, i + TANDA);
       const conId = [];
       for (const archivo of tanda) {
         conId.push({ archivo, id: await idDeFoto(await archivo.arrayBuffer()) });
       }
+      await anterior;
       const { ya, nuevas } = await empezarSubida(
         slug,
         conId.map(({ archivo, id }) => ({ id, nombre: archivo.name, tamano: archivo.size })),
@@ -123,20 +160,12 @@ export function Subida({ slug, avanceInicial }: { slug: string; avanceInicial: A
       avisar();
 
       const porId = new Map(conId.map((c) => [c.id, c.archivo]));
-      await enParalelo(nuevas, async (nueva) => {
-        const archivo = porId.get(nueva.id)!;
-        try {
-          await subirFoto(slug, archivo, nueva);
-        } catch (e) {
-          console.error(`${archivo.name}:`, e);
-          p.fallidas.push(archivo.name);
-          await abandonarSubida(slug, nueva.id, nueva.uploadId).catch(() => {});
-        }
-        p.hechas++;
-        avisar();
-      });
+      anterior = actual;
+      actual = Promise.all(nuevas.map((n) => conLugar(() => subirUna(porId.get(n.id)!, n))));
     }
+    await Promise.all([anterior, actual]);
 
+    avisar();
     setSubiendo(false);
     setEstado(await avance(slug));
   }
@@ -185,6 +214,10 @@ export function Subida({ slug, avanceInicial }: { slug: string; avanceInicial: A
           <p>
             {subiendo ? "Subiendo" : "Subida terminada"}: {progreso.hechas} de {progreso.total}
             {progreso.ya > 0 && ` (${progreso.ya} ya estaban)`}
+            {" · "}
+            {Math.round(progreso.bytes / 1024 / 1024)} MB en {Math.round(progreso.segundos)} s
+            {progreso.segundos > 0 &&
+              ` (${((progreso.bytes * 8) / 1_000_000 / progreso.segundos).toFixed(1)} Mbit/s)`}
           </p>
           <progress max={progreso.total || 1} value={progreso.hechas} />
           {progreso.salteadas.length > 0 && (
