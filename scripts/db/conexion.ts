@@ -8,10 +8,10 @@ export function hayBase(): boolean {
   return Boolean(process.env.DATABASE_URL);
 }
 
-export function conectar() {
+export function conectar(conexiones = 1) {
   if (!hayBase()) {
     console.error("✗ Falta DATABASE_URL en .env.local (ver .env.example).");
     process.exit(1);
   }
-  return postgres(process.env.DATABASE_URL!, { max: 1, onnotice: () => {} });
+  return postgres(process.env.DATABASE_URL!, { max: conexiones, onnotice: () => {} });
 }
