@@ -1,0 +1,11 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "RAILPACK",
+    "buildCommand": "echo 'El worker no compila Next: corre los .ts con strip-types'"
+  },
+  "deploy": {
+    "startCommand": "npm run worker",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}

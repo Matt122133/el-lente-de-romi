@@ -13,8 +13,17 @@ export async function getFotos(destino: string, respaldo: () => Foto[]): Promise
   const fotos = await db()<Foto[]>`
     SELECT id, ruta, width, height, thumbhash, alt, posicion
     FROM fotos
-    WHERE destino = ${destino}
+    WHERE destino = ${destino} AND estado = 'lista'
     ORDER BY posicion`;
   // Sin fotos, las de mentira de siempre.
   return fotos.length ? [...fotos] : respaldo();
+}
+
+// Fotos subidas desde el panel que el worker todavía no terminó (specs/004-panel-de-romi).
+export async function fotosPendientes(destino: string): Promise<number> {
+  await connection();
+  const [{ n }] = await db()<{ n: number }[]>`
+    SELECT count(*)::int AS n FROM fotos
+    WHERE destino = ${destino} AND estado IN ('subiendo', 'subida', 'procesando')`;
+  return n;
 }

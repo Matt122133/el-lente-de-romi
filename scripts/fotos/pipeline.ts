@@ -6,11 +6,11 @@ import { createHash } from "node:crypto";
 import sharp from "sharp";
 import { rgbaToThumbHash } from "thumbhash";
 import type { Foto } from "../../src/lib/fotos.ts";
-import { claveDerivada, VARIANTES, type Formato, type Variante } from "../../src/lib/imagenes.ts";
+import { claveDerivada, PIPELINE, VARIANTES, type Formato, type Variante } from "../../src/lib/imagenes.ts";
 
-// Entra en el hash de los nombres. Las derivadas se cachean un año: si cambia algo de
-// abajo (calidad, tamaños, color), se cambia esta fecha y todas las URLs cambian.
-export const PIPELINE = "2026-10-21";
+// PIPELINE vive en src/lib/imagenes.ts: el panel calcula el mismo id en el navegador
+// (research R3 de specs/004-panel-de-romi). Si cambia algo de abajo, se cambia ahí.
+export { PIPELINE };
 
 // Punto de partida para comparar con Pixieset, no un valor final (research R2). 4:4:4 en
 // AVIF para que no se corran rojos ni tonos de piel.

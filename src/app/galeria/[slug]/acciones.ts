@@ -20,7 +20,7 @@ export async function entrarConClave(
     return { error: "La contraseña no es correcta." };
   }
 
-  (await cookies()).set(nombreCookie(slug), firmar(slug), {
+  (await cookies()).set(nombreCookie(slug), firmar(slug, galeria.claveVersion), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

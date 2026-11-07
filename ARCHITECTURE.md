@@ -23,7 +23,10 @@ wherever `npm run fotos -- --subir` wrote them to the database, placeholders
 everywhere else. Photos live in Cloudflare R2: a public bucket with the
 derivatives (served from `img.ellentederomi.com`, never through the app) and a
 private one with the gallery originals. App and database are hosted on Railway,
-deployed from `master` (`railway.json`).
+deployed from `master` (`railway.json`). Romi manages her delivery galleries in
+a private panel at `/panel` (feature 004); her uploads go from the browser to R2
+and a separate worker service (`scripts/worker/`, `railway.worker.json`)
+generates the derivatives with the same pipeline as `npm run fotos`.
 Contact is WhatsApp only — there are no forms besides the gallery password.
 
 ## Top-level layout
@@ -42,6 +45,8 @@ Contact is WhatsApp only — there are no forms besides the gallery password.
     db/migraciones/   versioned SQL, applied in order by npm run db:migrar
     scripts/fotos/    local CLI: JPEG folder → derivatives, R2 upload, DB rows
     scripts/db/       migrate, seed the example data, checks without a DB
+    scripts/worker/   derivative worker for panel uploads (queue in the fotos table)
+    scripts/admin/    npm run admin:clave (hash for Romi's panel password)
     scripts/harness/  plan-coverage sensor and spec-kit gate
     manifiestos/, salida/  local cache of scripts/fotos (gitignored: they
                     carry client slugs and photos; the site no longer reads them)
@@ -57,6 +62,12 @@ Contact is WhatsApp only — there are no forms besides the gallery password.
   first, so those pages render per request: the build never needs the
   database, and an upload shows up without a deploy. `getFotos` falls back to
   placeholder photos when a destination has no rows.
+- The panel lives under `src/app/panel/`: `entrar/` is the only page without a
+  session; everything else is in the `(privado)` route group, whose layout and
+  every page and action call `exigirSesion()`. `src/proxy.ts` only does the
+  optimistic redirect.
+- A photo row moves `subiendo → subida → procesando → lista` (or `error`);
+  the public site only shows `lista`. Script uploads are inserted as `lista`.
 - Schema changes are new files in `db/migraciones/` (`NNN-name.sql`), never
   edits to applied ones; Railway runs `npm run db:migrar` before each deploy.
 - Colors, fonts and spacing are CSS variables in `src/styles/theme.css`;
@@ -100,6 +111,12 @@ build time), and the `R2_*` credentials and bucket names that only
 - `src/lib/acceso.ts` + `src/lib/claves.ts` + `galeria/[slug]/acciones.ts` —
   the scrypt password check against the stored hash and the HMAC-signed
   cookie, scoped to the gallery's path.
+- `src/app/panel/(privado)/galerias/[slug]/Subida.tsx` + `acciones.ts` +
+  `src/lib/r2.ts` — browser multipart upload: ids by WebCrypto
+  (`src/lib/idFoto.ts`, must match `nombreDeHash`), presigned parts, resume by
+  id. Needs CORS on the private bucket exposing `ETag`.
+- `scripts/worker/` — the queue (`FOR UPDATE SKIP LOCKED`, stuck rows released
+  after 10 minutes) and the HTTP wake-up on the private network.
 - `scripts/fotos/base.ts` — replaces a destination's photos in one
   transaction; `--subir` refuses a destination that is not in the database.
 - `src/lib/imagenes.ts` — the R2 path contract: host, `romi/` prefix,

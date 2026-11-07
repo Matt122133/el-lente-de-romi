@@ -11,12 +11,12 @@ import { dirname, extname, join } from "node:path";
 import { parseArgs } from "node:util";
 import { destinoValido, esGaleria, type Foto, type Manifiesto } from "../../src/lib/fotos.ts";
 import { claveDerivada, claveOriginal, VARIANTES, type Formato, type Variante } from "../../src/lib/imagenes.ts";
+import { ordenNatural } from "../../src/lib/orden.ts";
 import { conectar, hayBase } from "../db/conexion.ts";
 import { destinoExiste, reemplazarFotos } from "./base.ts";
 import { nombreDeHash, PIPELINE, procesarFoto, type Derivada } from "./pipeline.ts";
-import { buckets, clavesExistentes, subir, variablesFaltantes } from "./r2.ts";
+import { buckets, CACHE_DERIVADAS, clavesExistentes, subir, variablesFaltantes } from "./r2.ts";
 
-const CACHE_DERIVADAS = "public, max-age=31536000, immutable";
 const SUBIDAS_EN_PARALELO = 4;
 
 function uso(mensaje: string): never {
@@ -65,11 +65,10 @@ const rutaManifiesto = join(args.manifiestos, `${destino}.json`);
 const conOriginal = esGaleria(destino);
 
 // Orden natural: 2 antes que 10 (FR-015).
-const orden = new Intl.Collator("es", { numeric: true, sensitivity: "base" });
 const archivos = (await readdir(carpeta, { withFileTypes: true }))
   .filter((e) => e.isFile())
   .map((e) => e.name)
-  .sort(orden.compare);
+  .sort(ordenNatural);
 
 const jpegs: string[] = [];
 let salteadas = 0;

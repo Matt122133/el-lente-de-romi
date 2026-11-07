@@ -5,6 +5,11 @@
 // el dominio propio. Nunca apunta a la app.
 export const IMG_HOST = process.env.NEXT_PUBLIC_IMG_HOST || "https://img.ellentederomi.com";
 
+// Entra en el hash de los nombres (scripts/fotos/pipeline.ts y el panel). Las derivadas se
+// cachean un año: si cambia algo del pipeline (calidad, tamaños, color), se cambia esta
+// fecha y todas las URLs cambian.
+export const PIPELINE = "2026-10-21";
+
 // Todas las rutas en R2 empiezan con el identificador de la fotógrafa (sección 9).
 // Es gratis hacerlo ahora y carísimo migrarlo después.
 export const PREFIJO = "romi";
