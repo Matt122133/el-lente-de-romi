@@ -40,4 +40,8 @@ if ((await preguntarOculto("Otra vez: ")) !== clave) {
   console.error("✗ No coinciden.");
   process.exit(1);
 }
-console.log(`\nADMIN_CLAVE_HASH=${hashearClave(clave)}`);
+const hash = hashearClave(clave);
+// En Railway la variable se pega tal cual. En .env.local Next expande los "$" como variables,
+// así que ahí van escapados.
+console.log(`\nRailway:     ADMIN_CLAVE_HASH=${hash}`);
+console.log(`.env.local:  ADMIN_CLAVE_HASH=${hash.replaceAll("$", () => "\\$")}`);

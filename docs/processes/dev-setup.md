@@ -22,7 +22,9 @@ The harness model is described in [harness.md](harness.md).
   published site (research R5 of feature 003). Without it, pages that read the
   database show the error page.
 - For the panel, also in `.env.local`: `ADMIN_EMAIL`, `ADMIN_CLAVE_HASH` (run
-  `npm run admin:clave` in a real terminal: it hides what you type),
+  `npm run admin:clave` in a real terminal: it hides what you type; in
+  `.env.local` every `$` of the hash must be escaped as `\$`, because Next
+  expands `$NAME` there — the command prints that line too),
   `SESION_SECRETO`, and to process uploads locally `WORKER_SECRETO` and
   `WORKER_URL=http://localhost:8080` with `npm run worker` running in another
   terminal. Uploads from `localhost:3000` need it in the private bucket's CORS.
