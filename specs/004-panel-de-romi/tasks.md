@@ -59,8 +59,8 @@ acciones en los dashboards de Railway y Cloudflare.
 - [X] T022 [US2] Crear `scripts/worker/cola.ts`: `tomarSiguiente` (`FOR UPDATE SKIP LOCKED`), `liberarColgadas` (> 10 min), `marcarLista`, `marcarError`
 - [X] T023 [US2] Crear `scripts/worker/index.ts`: servidor `node:http` en `PORT`, `POST /procesar` con `WORKER_SECRETO` → 202 y vaciar la cola; al arrancar también la vacía. Por foto: bajar original del bucket privado, verificar hash = id, `procesarFoto`, subir derivadas con el cache de un año, `marcarLista`
 - [X] T024 [P] [US2] Crear `railway.worker.json`: sin build de Next (`buildCommand` que no compile), `startCommand` `npm run worker`, sin `preDeployCommand` ni healthcheck HTTP público
-- [ ] T025 **(Mateo)** Quickstart §1.1–1.3: variables de la app (`npm run admin:clave`), servicio `worker` con `railway.worker.json`, `WORKER_URL`, CORS del bucket privado
-- [ ] T026 [US2] Quickstart §3 en local (`npm run dev` + worker de Railway, o `npm run worker` local con `WORKER_URL=http://localhost:<puerto>`)
+- [X] T025 **(Mateo)** Quickstart §1.1–1.3: variables de la app (`npm run admin:clave`), servicio `worker` con `railway.worker.json`, `WORKER_URL`, CORS del bucket privado
+- [X] T026 [US2] Quickstart §3 en local (`npm run dev` + worker de Railway, o `npm run worker` local con `WORKER_URL=http://localhost:<puerto>`)
 
 **Checkpoint**: una galería creada y llena desde el panel se ve en el sitio.
 
@@ -75,15 +75,15 @@ acciones en los dashboards de Railway y Cloudflare.
 - [X] T027 [US3] `src/content/galerias.ts`: `listarGalerias()` (con conteo de fotos listas), `editarGaleria` (clave nueva → hash y `clave_version + 1`), `borrarGaleria` (research R8 con `borrarPrefijo` en los dos buckets, después la base)
 - [X] T028 [US3] `src/app/panel/(privado)/page.tsx` completa (con `exigirSesion()`): título, fotos, vencimiento, estado (vigente / ≤ 7 días / vencida), "Nueva galería"
 - [X] T029 [US3] `src/app/panel/(privado)/galerias/[slug]/page.tsx` (con `exigirSesion()`; la crea T026 si hace falta antes): "Copiar link" (cliente, `navigator.clipboard`), formulario de clave y vencimiento, "Borrar galería" que pide escribir el título; acciones `editarGaleria` y `borrarGaleria`
-- [ ] T030 [US3] Quickstart §4
+- [X] T030 [US3] Quickstart §4
 
 ---
 
 ## Phase 6: Polish
 
 - [X] T031 [P] `ARCHITECTURE.md` (panel, proxy, worker, cola, `src/lib/r2.ts`), `SECURITY.md` (login del panel, sesión, límite de intentos, variables), `docs/processes/dev-setup.md` (variables nuevas, `admin:clave`, correr el worker en local)
-- [ ] T032 Mergear a `master`, quickstart §2–§5 en Railway, anotar en `plan.md` § Verificación
-- [ ] T033 Revisar que el diff no tenga el mail de Romi, hashes, secretos ni slugs reales (FR-015, principio VI)
+- [X] T032 Mergear a `master`, quickstart §2–§5 en Railway, anotar en `plan.md` § Verificación
+- [X] T033 Revisar que el diff no tenga el mail de Romi, hashes, secretos ni slugs reales (FR-015, principio VI)
 
 ---
 

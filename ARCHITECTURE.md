@@ -25,8 +25,11 @@ derivatives (served from `img.ellentederomi.com`, never through the app) and a
 private one with the gallery originals. App and database are hosted on Railway,
 deployed from `master` (`railway.json`). Romi manages her delivery galleries in
 a private panel at `/panel` (feature 004); her uploads go from the browser to R2
-and a separate worker service (`scripts/worker/`, `railway.worker.json`)
-generates the derivatives with the same pipeline as `npm run fotos`.
+and a separate worker service (`scripts/worker/`) generates the derivatives with
+the same pipeline as `npm run fotos`. The worker service is configured by
+variables, not by a config file: `RAILPACK_START_CMD=npm run worker`,
+`RAILPACK_BUILD_CMD` (skips the Next build), `WORKER_PARALELO=4`, 8 vCPU, no
+public domain. Railway applies the repo's `railway.json` to the app only.
 Contact is WhatsApp only — there are no forms besides the gallery password.
 
 ## Top-level layout
