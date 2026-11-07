@@ -113,8 +113,9 @@ guardado idéntico al archivo de su compu.
 6. **Given** un archivo que no es JPEG en la carpeta, **Then** se saltea con
    un aviso y el resto sigue.
 7. **Given** una galería que todavía se está procesando, **Then** el
-   cliente no ve fotos a medias: o ve las ya listas en su orden, o el aviso
-   de que la galería se está preparando.
+   cliente ve solo las fotos ya listas, en su orden; si todavía no hay
+   ninguna lista, ve el aviso de que la galería se está preparando (no
+   placeholders).
 
 ---
 
@@ -218,8 +219,8 @@ almacenamiento.
 - **Sesión**: prueba de que Romi entró; vence a los 30 días.
 - **Galería**: ya existe (003). Suma fecha de creación y una versión de la
   contraseña para invalidar accesos viejos (FR-011).
-- **Foto**: ya existe (003). Suma un estado de procesamiento (subida,
-  procesando, lista, con error) para que el panel muestre el avance y la
+- **Foto**: ya existe (003). Suma un estado de procesamiento (subiendo,
+  subida, procesando, lista, con error) para que el panel muestre el avance y la
   galería pública solo vea las listas.
 
 ## Success Criteria *(mandatory)*
