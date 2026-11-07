@@ -29,7 +29,8 @@ async function procesar(t: Trabajo): Promise<void> {
   // El id es el hash del contenido: si no coincide, el archivo llegó distinto (principio IV).
   if (nombreDeHash(original) !== t.id) throw new Error("El original en R2 no coincide con el subido");
   const { foto, derivadas } = await procesarFoto(original, t.destino);
-  for (const d of derivadas) await subir(b.publico, d.clave, d.bytes, d.contentType, CACHE_DERIVADAS);
+  // Las 8 en paralelo: de a una, la subida pesaba tanto como generar las derivadas.
+  await Promise.all(derivadas.map((d) => subir(b.publico, d.clave, d.bytes, d.contentType, CACHE_DERIVADAS)));
   await marcarLista(sql, t, { width: foto.width, height: foto.height, thumbhash: foto.thumbhash! });
 }
 
