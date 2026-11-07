@@ -1,6 +1,6 @@
 ---
 ticket: none
-status: active
+status: completed
 covers:
   - src/
   - scripts/
@@ -201,6 +201,19 @@ que `src/lib/fotos.ts` en la 002.
   ninguna imagen servida por Railway; galería cerrada sin hashes y con
   `noindex, nofollow`; vencida con su fecha; categorías desde la base en el
   mismo orden.
-- **Pendiente**: contraseña `demo` en el navegador (§4.3), base apagada
-  (§4.8), merge a `master` con deploy automático (§4.7), restaurar un backup
-  (§5) y el consumo en *Usage* (SC-004).
+- §4.3: Mateo entró a `/galeria/ejemplo` con `demo` en el navegador y anda.
+- §4.7 / SC-002: PR #4 mergeado a `master` y la app de Railway pasada a
+  `master`; el push disparó el deploy de `2e2f804` solo.
+- No probados: base apagada (§4.8; el código tiene `error.tsx`).
+
+## Cierre (2026-11-06)
+
+Completada, con dos cosas pasadas a `docs/tech-debt-tracker.md`:
+
+- **Respaldo (FR-010, SC-006, T027)**: Railway solo tiene backups en el plan
+  Pro. Deuda Medium, a resolver antes de la primera galería real (004) con el
+  script de research R6. Hoy la base se rearma desde los comandos y R2.
+- **Consumo (SC-004)**: se confirma mirando *Usage* en unos días. Deuda Low.
+
+La decisión de hosting (Railway; Vercel descartado) va a la sección 0 del
+doc cuando vuelva el MCP de gdocs (deuda Medium ya abierta).

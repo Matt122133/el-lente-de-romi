@@ -56,7 +56,7 @@ el agente no puede ni debe hacer en la cuenta.
 
 - [X] T018 [P] [US2] Crear `railway.json`: builder Railpack, `deploy.preDeployCommand` `npm run db:migrar`, `deploy.startCommand` `npm start`, `deploy.healthcheckPath` `/` (research R7)
 - [X] T019 [P] [US2] Crear `src/app/error.tsx` (client component): mensaje amable con el estilo de `src/app/not-found.tsx` y botón para reintentar; nunca muestra el error ni datos
-- [ ] T020 [US2] Mergear a `master` y, cuando Railway termine, quickstart §4.1, §4.2, §4.5, §4.6 y §4.7 en el dominio de Railway
+- [X] T020 [US2] Mergear a `master` y, cuando Railway termine, quickstart §4.1, §4.2, §4.5, §4.6 y §4.7 en el dominio de Railway
 
 **Checkpoint**: el sitio publicado en Railway reemplaza al preview de Vercel.
 
@@ -73,7 +73,7 @@ el agente no puede ni debe hacer en la cuenta.
 - [X] T023 [US3] `src/app/page.tsx` y `src/app/portfolio/page.tsx`: `await getCategorias()` en lugar de `site.categorias`
 - [X] T024 [US3] `src/app/portfolio/[categoria]/page.tsx`: `await getCategoria(...)` en la página y en `generateMetadata`
 - [X] T025 [US3] `src/app/galeria/[slug]/page.tsx` y `acciones.ts`: `await getGaleria(...)`; la acción usa `claveCorrecta`; los placeholders de una galería sin fotos son una constante de 40
-- [ ] T026 [US3] Mergear a `master` y quickstart §4.3, §4.4 y §4.8 en Railway; además, ver `noindex` en el HTML de `/galeria/ejemplo` (FR-013)
+- [X] T026 [US3] Mergear a `master` y quickstart §4.3, §4.4 y §4.8 en Railway; además, ver `noindex` en el HTML de `/galeria/ejemplo` (FR-013)
 
 **Checkpoint**: las tres historias andan en el sitio publicado.
 
@@ -81,10 +81,10 @@ el agente no puede ni debe hacer en la cuenta.
 
 ## Phase 6: Polish
 
-- [ ] T027 Respaldo (FR-010): si T010 encontró backups programados en Hobby, activarlos y hacer el quickstart §5 con ellos. Si no: crear `scripts/db/respaldar.ts` y `scripts/db/restaurar.ts` según `contracts/cli.md` (reusan `scripts/fotos/r2.ts` para subir/bajar del bucket privado), sus scripts en `package.json`, el servicio cron en Railway **(Mateo)** y quickstart §5
+- [ ] T027 — **Pasó a deuda (2026-11-06)**: Hobby no tiene backups; ver § Cierre del plan. Respaldo (FR-010): si T010 encontró backups programados en Hobby, activarlos y hacer el quickstart §5 con ellos. Si no: crear `scripts/db/respaldar.ts` y `scripts/db/restaurar.ts` según `contracts/cli.md` (reusan `scripts/fotos/r2.ts` para subir/bajar del bucket privado), sus scripts en `package.json`, el servicio cron en Railway **(Mateo)** y quickstart §5
 - [X] T028 [P] Actualizar `ARCHITECTURE.md` (Postgres en Railway, `db/`, `scripts/db/`, getters async, render por pedido) y `docs/processes/dev-setup.md` (`DATABASE_URL` en `.env.local`, `db:migrar`, `db:sembrar`; una sola base hasta la 004)
-- [ ] T029 Correr `verify:` y anotar en `specs/003-base-de-datos-railway/plan.md` § Verificación los resultados de todo el quickstart, más el consumo que muestra la pestaña *Usage* de Railway después de unos días con el sitio publicado (SC-004)
-- [ ] T030 Revisar que `git status`/el diff no tengan `.env.local`, URLs de la base, slugs reales ni contraseñas distintas de `demo` (FR-011, FR-012)
+- [X] T029 Correr `verify:` y anotar en `specs/003-base-de-datos-railway/plan.md` § Verificación los resultados de todo el quickstart, más el consumo que muestra la pestaña *Usage* de Railway después de unos días con el sitio publicado (SC-004)
+- [X] T030 Revisar que `git status`/el diff no tengan `.env.local`, URLs de la base, slugs reales ni contraseñas distintas de `demo` (FR-011, FR-012)
 
 ---
 
