@@ -143,7 +143,9 @@ muestra que venció; ningún archivo del código contiene las contraseñas.
   del disco del servidor.
 - **FR-002**: Las páginas MUST seguir pidiendo los datos por los mismos puntos
   de acceso de hoy (`getCategoria`, `getGaleria`, `getFotos`), de modo que las
-  páginas y los componentes no cambien de comportamiento.
+  páginas y los componentes no cambien de comportamiento. Se suman
+  `getCategorias` (reemplaza a `site.categorias`) y `claveCorrecta` (la
+  contraseña ya no viaja con la galería).
 - **FR-003**: La subida (`--subir`) MUST escribir en la base las fotos de su
   destino, reemplazando la lista anterior de ese destino, en un solo paso
   (nadie ve el destino a medio escribir).
@@ -227,5 +229,5 @@ muestra que venció; ningún archivo del código contiene las contraseñas.
   sus fotos) sigue bloqueando galerías reales.
 - El preview de Vercel se da de baja cuando el sitio en Railway funcione; es
   una acción de Mateo en su cuenta, no parte del código.
-- La rama principal es `master`; hasta mergear el PR #2, lo que se publica
-  sale de la rama que Mateo elija en Railway.
+- La rama principal es `master` (el PR #3 se mergeó el 2026-11-06): Railway
+  publica desde ahí.
