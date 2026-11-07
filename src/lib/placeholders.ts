@@ -1,17 +1,8 @@
-// Fotos de mentira para el skeleton. Tienen la misma forma que van a tener las reales
-// (ancho y alto guardados en la DB, ver sección 6 del doc), así la grilla ya se calcula
-// con proporciones reales y no hay que tocarla cuando lleguen las fotos.
+// Fotos de mentira para el skeleton. Tienen la misma forma que las reales (ancho y alto,
+// ver sección 6 del doc), así la grilla se calcula con proporciones reales. Se usan donde
+// todavía no hay manifiesto.
 
-export type Foto = {
-  id: string;
-  // Ruta en R2 sin prefijo ni variante (ver lib/imagenes.ts).
-  ruta: string;
-  width: number;
-  height: number;
-  // Versión borrosa de ~30 caracteres para mostrar mientras carga. Null en las de mentira.
-  thumbhash: string | null;
-  alt: string;
-};
+import type { Foto } from "./fotos";
 
 // Proporciones típicas de cámara: horizontales 3:2, verticales 2:3 y 4:5, alguna cuadrada.
 const PROPORCIONES: Array<[number, number]> = [
@@ -51,6 +42,7 @@ export function fotosDeMentira(semilla: string, cantidad: number): Foto[] {
       height: h * 1000,
       thumbhash: null,
       alt: "",
+      posicion: i,
     };
   });
 }

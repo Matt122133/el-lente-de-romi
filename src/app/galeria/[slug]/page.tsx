@@ -4,13 +4,15 @@ import { notFound } from "next/navigation";
 import { BotonWhatsapp } from "@/components/BotonWhatsapp";
 import { JustifiedGrid } from "@/components/JustifiedGrid";
 import { FotoSkeleton } from "@/components/Skeleton";
+import { getFotos } from "@/content/fotos";
 import { estaVencida, formatearFecha, getGaleria } from "@/content/galerias";
 import { firmaValida, nombreCookie } from "@/lib/acceso";
 import { fotosDeMentira } from "@/lib/placeholders";
 import { FormularioClave } from "./FormularioClave";
 
 // Galería de entrega para clientes (fase 3 del roadmap). Ya tiene contraseña y
-// vencimiento; las fotos y las descargas todavía son de mentira. Nunca se indexa en Google.
+// vencimiento; las fotos salen del manifiesto si lo hay, y la descarga de cada foto todavía
+// es de mentira. Nunca se indexa en Google.
 export const metadata: Metadata = {
   title: "Galería",
   robots: { index: false, follow: false },
@@ -50,6 +52,10 @@ export default async function Galeria({ params }: Props) {
     );
   }
 
+  // Recién acá, con la contraseña ya validada: una galería cerrada no deja ninguna ruta de
+  // foto en la página (FR-014).
+  const fotos = getFotos(`galerias/${slug}`, () => fotosDeMentira(slug, galeria.cantidadFotos));
+
   return (
     <>
       <section className="galeria-portada">
@@ -60,18 +66,12 @@ export default async function Galeria({ params }: Props) {
           <div>
             <h1>{galeria.titulo}</h1>
             <p>
-              {formatearFecha(galeria.fecha)} · {galeria.cantidadFotos} fotos · Disponible
+              {formatearFecha(galeria.fecha)} · {fotos.length} fotos · Disponible
               hasta el {formatearFecha(galeria.venceEl)}
             </p>
           </div>
-          {galeria.tieneZip && (
-            // URL firmada al .zip en R2 (sección 8). Fase 3.
-            <span className="boton boton-deshabilitado" title="Disponible en la fase 3">
-              Descargar todo (.zip)
-            </span>
-          )}
         </div>
-        <JustifiedGrid fotos={fotosDeMentira(slug, galeria.cantidadFotos)} descargable />
+        <JustifiedGrid fotos={fotos} descargable />
       </div>
     </>
   );

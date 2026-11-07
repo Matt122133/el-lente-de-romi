@@ -8,9 +8,16 @@ next-env.d.ts
 .DS_Store
 npm-debug.log*
 
+# Fotos reales: manifiestos y derivadas locales llevan slugs y fotos de clientes
+manifiestos/
+salida/
+
 # Harness
 __pycache__/
 **/__pycache__/
 *.py[cod]
 .claude/settings.local.json
 specs/**/.loop-state.json
+
+# Vercel CLI (vercel link)
+.vercel/

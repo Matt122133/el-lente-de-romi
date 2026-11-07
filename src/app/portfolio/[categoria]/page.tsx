@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JustifiedGrid } from "@/components/JustifiedGrid";
+import { getFotos } from "@/content/fotos";
 import { getCategoria, site } from "@/content/site";
 import { fotosDeMentira } from "@/lib/placeholders";
 
@@ -27,7 +28,9 @@ export default async function CategoriaPage({ params }: Props) {
         <h1>{categoria.nombre}</h1>
         <p>{categoria.descripcion}</p>
       </header>
-      <JustifiedGrid fotos={fotosDeMentira(categoria.slug, 24)} />
+      <JustifiedGrid
+        fotos={getFotos(`portfolio/${categoria.slug}`, () => fotosDeMentira(categoria.slug, 24))}
+      />
     </div>
   );
 }

@@ -1,5 +1,17 @@
 <!--
-Sync Impact Report
+Sync Impact Report (1.1.0)
+- Version change: 1.0.0 → 1.1.0 (MINOR: scope moves)
+- Modified sections: Scope boundaries — item 3 drops the client's ZIP and
+  defines the delivery gallery as Romi's selection with single-photo download;
+  the client's ZIP is added to out of scope.
+- Principles: unchanged. III keeps "or a ZIP" as a general prohibition.
+- Templates: ✅ plan-template.md, spec-template.md, tasks-template.md (no
+  principle-driven sections affected) · ✅ AGENTS.md / CLAUDE.md (defer to this
+  document) · ⚠ src/app/galeria/[slug]/page.tsx and src/content/galerias.ts
+  still show the ZIP button — removed by feature 002 (FR-016).
+- Source: Mateo, 2026-10-21; project doc section 0, row of 21/10/2026.
+
+Sync Impact Report (1.0.0)
 - Version change: template → 1.0.0 (initial ratification)
 - Principles: I. Romi's site, not a platform · II. Fast, faithful, cheap ·
   III. Photo bytes never touch the app · IV. The original is sacred ·
@@ -83,14 +95,15 @@ In scope, in roadmap order (project doc section 13):
    Pixieset.
 2. Portfolio: home, categories (social, fashion, products, events and
    congresses), about, contact.
-3. Delivery galleries: Romi's panel to create, upload and publish; password;
-   single-photo download for guests; the client's full ZIP (the one Romi
-   already builds, uploaded as-is).
+3. Delivery galleries: Romi's panel to create, upload and publish; password.
+   A gallery is the selection Romi chooses to show, and the client and guests
+   download its photos one at a time.
 4. Whatever Romi asks for after using it (favorites, watermark, payments).
 
 Out of scope until this document is amended: online store, prints and albums,
 blog, price list, booking, contact form (contact is WhatsApp and social links),
-client accounts, multi-tenant.
+client accounts, multi-tenant, and the client's full ZIP of the event (Romi
+hands it to the client herself; it never goes through the site).
 
 ## Working with the project doc
 
@@ -116,5 +129,7 @@ Romi cite her request.
 ### History
 
 - **1.0.0** (2026-10-18) — Ratified, derived from the project doc.
+- **1.1.0** (2026-10-21) — The client's ZIP leaves the scope: Romi hands it
+  over herself (project doc section 0, 21/10/2026). Approved by Mateo.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-18 | **Last Amended**: 2026-10-18
+**Version**: 1.1.0 | **Ratified**: 2026-10-18 | **Last Amended**: 2026-10-21
