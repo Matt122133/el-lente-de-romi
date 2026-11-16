@@ -58,8 +58,9 @@ h2 {
   padding: 0 var(--gutter);
 }
 
+/* Solo el padding vertical: va junto a .contenedor y no le tiene que pisar el lateral. */
 .seccion {
-  padding: 56px 0;
+  padding-block: 56px;
 }
 
 .seccion-titulo {
