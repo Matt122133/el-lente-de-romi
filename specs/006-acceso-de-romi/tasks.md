@@ -19,9 +19,9 @@ real entra al repo (FR-007).
 
 ## Phase 2: Operación
 
-- [ ] T006 **(op)** Railway (app): `ADMIN_CLAVE_HASH` = hash de `1234`; `ADMIN_EMAIL` = los dos mails de Romi y el de Mateo (FR-008). Solo después del deploy del código de T002: antes, una lista con comas no deja entrar a nadie
-- [ ] T007 **(op)** Entrar en producción con cada uno de los tres mails y `1234`; con un mail fuera de la lista, el mensaje de siempre (SC-001, SC-002)
-- [ ] T008 **(op)** Actualizar el comentario de credenciales de `.env.local` (no va a git) y la sección 0 del doc
+- [X] T006 **(op)** Railway (app): `ADMIN_CLAVE_HASH` = hash de `1234`; `ADMIN_EMAIL` = los dos mails de Romi y el de Mateo (FR-008). Solo después del deploy del código de T002: antes, una lista con comas no deja entrar a nadie
+- [X] T007 **(op)** Entrar en producción con cada uno de los tres mails y `1234`; con un mail fuera de la lista, el mensaje de siempre (SC-001, SC-002). Hecho el 16/11/2026: los tres entran (303 con cookie de sesión, también con mayúsculas y espacios); uno fuera de la lista recibe el mensaje de siempre y no entra
+- [X] T008 **(op)** Actualizar el comentario de credenciales de `.env.local` (no va a git) y la sección 0 del doc
 
 ## Dependencies
 
