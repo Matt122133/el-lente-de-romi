@@ -3,6 +3,7 @@
 import { randomBytes } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { esMailAdmin, mailsAdmin } from "@/lib/admins";
 import { hashearClave, verificarClave } from "@/lib/claves";
 import { bloqueada, limpiarIntentos, registrarFallo } from "@/lib/intentos";
 import { COOKIE_SESION, DURACION_SESION_S, firmarSesion, opcionesCookie } from "@/lib/sesion";
@@ -27,11 +28,11 @@ export async function entrar(_previo: EstadoEntrar, datos: FormData): Promise<Es
 
   const mail = String(datos.get("mail") ?? "").trim().toLowerCase();
   const clave = String(datos.get("clave") ?? "");
-  const mailEsperado = (process.env.ADMIN_EMAIL ?? "").trim().toLowerCase();
   const hash = process.env.ADMIN_CLAVE_HASH || HASH_DE_RELLENO;
 
   const claveOk = verificarClave(clave, hash) && Boolean(process.env.ADMIN_CLAVE_HASH);
-  const mailOk = mailEsperado !== "" && mail === mailEsperado;
+  // Cualquiera de los mails de ADMIN_EMAIL (specs/006-acceso-de-romi, FR-002).
+  const mailOk = esMailAdmin(mail, mailsAdmin(process.env.ADMIN_EMAIL));
   if (!claveOk || !mailOk) {
     await registrarFallo(ip);
     return { error: MENSAJE };
