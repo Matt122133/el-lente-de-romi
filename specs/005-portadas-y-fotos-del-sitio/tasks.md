@@ -114,7 +114,7 @@ del Drive entra al repo (FR-017).
 
 - [X] T033 [P] `ARCHITECTURE.md`: destinos `sitio/*`, derivada og y la regla de `PIPELINE`, `src/content/portfolio.ts`, `src/lib/recientes.ts`, la sección Portfolio del panel y la tabla `recientes`
 - [X] T034 Correr `verify:` completo hasta verde
-- [ ] T035 Quickstart completo en local y, tras el deploy, contra Railway (§3, §4 en compu y celular, §5). Hecho: §3 en Railway (portada, 12 recientes, og de inicio y categoría 200 `image/jpeg`, galería sin foto propia, panel protegido). Falta: §4 tocando los botones del panel en compu y celular, y §5 en WhatsApp (Mateo)
+- [X] T035 Quickstart completo en local y, tras el deploy, contra Railway (§3, §4 en compu y celular, §5). Hecho: §3 en Railway (portada, 12 recientes, og de inicio y categoría 200 `image/jpeg`, galería sin foto propia, panel protegido). Mateo probó en producción los botones del panel (compu y celular) y la vista previa en WhatsApp: anda
 
 - [X] T036 `src/app/globals.css`: `.seccion` pisaba el padding lateral de `.contenedor` (venía de antes de la 005; las secciones quedaban pegadas al borde). Pasa a `padding-block` (encontrado al verificar el inicio, agregado al cerrar)
 
