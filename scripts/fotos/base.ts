@@ -2,7 +2,7 @@
 // efectos al importarlo: lo usan procesar.ts y scripts/db/probar.ts.
 
 import type postgres from "postgres";
-import { esGaleria, type Foto } from "../../src/lib/fotos.ts";
+import { esGaleria, esSitio, USOS_SITIO, type Foto } from "../../src/lib/fotos.ts";
 
 type Sql = postgres.Sql;
 
@@ -20,6 +20,8 @@ export function filasDeFotos(destino: string, fotos: Foto[]): FilaFoto[] {
 // La categoría o la galería tiene que existir antes de subir nada (FR-015).
 export async function destinoExiste(sql: Sql, destino: string): Promise<boolean> {
   const [, slug] = destino.split("/");
+  // Las fotos de Romi no tienen tabla: solo valen los usos conocidos (research R2 de la 005).
+  if (esSitio(destino)) return (USOS_SITIO as readonly string[]).includes(slug);
   const filas = esGaleria(destino)
     ? await sql`SELECT 1 FROM galerias WHERE slug = ${slug}`
     : await sql`SELECT 1 FROM categorias WHERE slug = ${slug}`;

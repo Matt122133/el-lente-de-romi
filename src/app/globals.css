@@ -243,6 +243,45 @@ h2 {
   color: var(--color-texto-suave);
 }
 
+/* Con la foto de Romi (US4 de specs/005-portadas-y-fotos-del-sitio): en celular la foto
+   arriba, recortada desde arriba para no cortar la cara; desde 900 px, la foto entera a la
+   izquierda y el texto a la derecha. Los altos salen del viewport: nada salta al cargar. */
+.hero-con-foto {
+  height: auto;
+  min-height: 0;
+  display: grid;
+}
+
+.hero-con-foto .hero-foto {
+  max-height: 70vh;
+}
+
+.hero-con-foto .hero-foto img {
+  object-position: center top;
+}
+
+.hero-con-foto .hero-texto {
+  height: auto;
+  padding: 40px var(--gutter);
+}
+
+@media (min-width: 900px) {
+  .hero-con-foto {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    max-width: var(--ancho-max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    gap: 64px;
+  }
+
+  .hero-con-foto .hero-foto {
+    width: auto;
+    height: min(78vh, 760px);
+    max-height: none;
+  }
+}
+
 /* ---------- Categorías ---------- */
 
 .categorias {
@@ -263,7 +302,8 @@ h2 {
   overflow: hidden;
 }
 
-.categoria-card .skeleton {
+.categoria-card .skeleton,
+.categoria-card .foto {
   transition: transform 0.6s ease, filter 0.4s;
 }
 
@@ -282,12 +322,26 @@ h2 {
   transition: background 0.4s;
 }
 
-.categoria-card:hover .skeleton {
+.categoria-card:hover .skeleton,
+.categoria-card:hover .foto {
   transform: scale(1.03);
 }
 
 .categoria-card:hover .categoria-nombre {
   background: rgba(255, 255, 255, 0.55);
+}
+
+/* Con portada, el nombre va abajo, en blanco sobre un velo: sobre una foto el texto oscuro
+   no se lee. */
+.categoria-card .foto + .categoria-nombre {
+  align-items: flex-end;
+  padding-bottom: 18px;
+  color: var(--color-sobre-foto);
+  background: linear-gradient(to top, var(--velo-foto), transparent 55%);
+}
+
+.categoria-card:hover .foto + .categoria-nombre {
+  background: linear-gradient(to top, var(--velo-foto), transparent 80%);
 }
 
 /* ---------- Foto real ---------- */
@@ -702,4 +756,115 @@ h2 {
 
 .boton-peligro {
   background: var(--color-error);
+}
+
+/* ---------- Panel: portfolio (specs/005-portadas-y-fotos-del-sitio) ---------- */
+
+/* Botones de al menos 44 px: Romi elige desde el celular. */
+.panel-boton {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  cursor: pointer;
+}
+
+.panel-boton[aria-pressed="true"] {
+  color: var(--color-acento-texto);
+  background: var(--color-acento);
+  border-color: var(--color-acento);
+}
+
+.panel-boton:disabled:not([aria-pressed="true"]) {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.panel-aviso {
+  padding: 12px 16px;
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+
+.panel-categorias {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap);
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 900px) {
+  .panel-categorias {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.panel-categorias a {
+  display: grid;
+  gap: 6px;
+}
+
+.panel-categorias .texto-suave {
+  font-size: 0.8rem;
+}
+
+.panel-fotos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px var(--grid-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 700px) {
+  .panel-fotos {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+.panel-fotos li {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.panel-foto-portada .foto {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.panel-foto-botones {
+  display: grid;
+  gap: 4px;
+}
+
+.panel-foto-botones .panel-boton {
+  width: 100%;
+  padding: 0 4px;
+}
+
+.panel-recientes {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-recientes li {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.panel-acciones form {
+  display: contents;
 }

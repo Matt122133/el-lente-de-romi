@@ -14,7 +14,8 @@
     "db:probar": "node --experimental-strip-types --no-warnings scripts/db/probar.ts",
     "worker": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/worker/index.ts",
     "admin:clave": "node --experimental-strip-types --no-warnings scripts/admin/clave.ts",
-    "panel:probar": "node --experimental-strip-types --no-warnings scripts/panel/probar.ts"
+    "panel:probar": "node --experimental-strip-types --no-warnings scripts/panel/probar.ts",
+    "portfolio:probar": "node --experimental-strip-types --no-warnings scripts/portfolio/probar.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1155.0",

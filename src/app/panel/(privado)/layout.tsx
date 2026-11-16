@@ -9,7 +9,10 @@ export default async function PanelPrivadoLayout({ children }: { children: React
   return (
     <div className="contenedor panel">
       <nav className="panel-barra">
-        <Link href="/panel">Galerías</Link>
+        <div className="panel-acciones">
+          <Link href="/panel">Galerías</Link>
+          <Link href="/panel/portfolio">Portfolio</Link>
+        </div>
         <form action={salir}>
           <button type="submit" className="panel-enlace">
             Cerrar sesión

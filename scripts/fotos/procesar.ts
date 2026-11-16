@@ -10,7 +10,7 @@ import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, extname, join } from "node:path";
 import { parseArgs } from "node:util";
 import { destinoValido, esGaleria, type Foto, type Manifiesto } from "../../src/lib/fotos.ts";
-import { claveDerivada, claveOriginal, VARIANTES, type Formato, type Variante } from "../../src/lib/imagenes.ts";
+import { claveDerivada, claveOg, claveOriginal, VARIANTES, type Formato, type Variante } from "../../src/lib/imagenes.ts";
 import { ordenNatural } from "../../src/lib/orden.ts";
 import { conectar, hayBase } from "../db/conexion.ts";
 import { destinoExiste, reemplazarFotos } from "./base.ts";
@@ -131,7 +131,7 @@ for (const [i, nombre] of jpegs.entries()) {
       derivadas = await Promise.all(
         claves.map(async (clave) => ({
           clave,
-          contentType: clave.endsWith(".avif") ? "image/avif" : "image/webp",
+          contentType: clave.endsWith(".avif") ? "image/avif" : clave.endsWith(".jpg") ? "image/jpeg" : "image/webp",
           bytes: await readFile(join(args.salida, clave)),
         })),
       );
@@ -205,7 +205,9 @@ if (sql) {
 }
 
 function derivadasEsperadas(ruta: string): string[] {
-  return (Object.keys(VARIANTES) as Variante[]).flatMap((v) =>
+  const claves = (Object.keys(VARIANTES) as Variante[]).flatMap((v) =>
     (["avif", "webp"] as Formato[]).map((f) => claveDerivada(ruta, v, f)),
   );
+  // La og solo fuera de las galerías (research R3 de la 005).
+  return conOriginal ? claves : [...claves, claveOg(ruta)];
 }

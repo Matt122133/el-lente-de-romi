@@ -33,10 +33,10 @@ const reales = await listarMigraciones();
 assert.equal(reales[0], "001-inicial.sql", "la primera migración del repo");
 
 // Destinos: solo formato; la existencia la verifica la base (FR-015).
-for (const ok of ["portfolio/social", "portfolio/nueva", "galerias/ejemplo", "galerias/boda-2026"]) {
+for (const ok of ["portfolio/social", "portfolio/nueva", "galerias/ejemplo", "galerias/boda-2026", "sitio/portada"]) {
   assert.ok(destinoValido(ok), ok);
 }
-for (const mal of ["portfolio/Social", "portfolio/", "galerias/-x", "galerias/a--b", "otra/cosa", "portfolio/a/b"]) {
+for (const mal of ["portfolio/Social", "portfolio/", "galerias/-x", "galerias/a--b", "otra/cosa", "portfolio/a/b", "sitio/Portada", "sitio/", "sitio/a/b"]) {
   assert.ok(!destinoValido(mal), mal);
 }
 

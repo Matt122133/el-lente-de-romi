@@ -12,11 +12,17 @@ export function Foto({
   foto,
   sizes,
   prioridad = false,
+  recorte,
+  className,
 }: {
   foto: FotoDatos;
   sizes: string;
   // Las de la primera fila se piden antes que nada: es lo que se ve primero.
   prioridad?: boolean;
+  // Proporción fija de la caja (ej. 4/5 en las tarjetas): la foto la llena recortada, como
+  // object-fit: cover. Sin recorte, la caja tiene la proporción de la foto.
+  recorte?: number;
+  className?: string;
 }) {
   const ref = useRef<HTMLImageElement>(null);
   const [estado, setEstado] = useState<"cargando" | "lista" | "error">("cargando");
@@ -35,10 +41,10 @@ export function Foto({
 
   return (
     <div
-      className="foto"
+      className={className ? `foto ${className}` : "foto"}
       style={
         {
-          aspectRatio: foto.width / foto.height,
+          aspectRatio: recorte ?? foto.width / foto.height,
           backgroundImage: fondo ? `url(${fondo})` : undefined,
         } as CSSProperties
       }
