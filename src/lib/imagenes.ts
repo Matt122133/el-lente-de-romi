@@ -7,7 +7,8 @@ export const IMG_HOST = process.env.NEXT_PUBLIC_IMG_HOST || "https://img.ellente
 
 // Entra en el hash de los nombres (scripts/fotos/pipeline.ts y el panel). Las derivadas se
 // cachean un año: si cambia algo del pipeline (calidad, tamaños, color), se cambia esta
-// fecha y todas las URLs cambian.
+// fecha y todas las URLs cambian. Agregar una derivada nueva (como la og) no lo cambia: las
+// que ya existen siguen iguales, y cambiarlo cambiaría los ids de todas las fotos.
 export const PIPELINE = "2026-10-21";
 
 // Todas las rutas en R2 empiezan con el identificador de la fotógrafa (sección 9).
@@ -35,6 +36,19 @@ export function urlDerivada(ruta: string, variante: Variante, formato: Formato):
 // Clave en R2 de una derivada: la URL sin el host. La usa el script de subida.
 export function claveDerivada(ruta: string, variante: Variante, formato: Formato): string {
   return `${PREFIJO}/${ruta}-${variante}.${formato}`;
+}
+
+// Imagen para la vista previa al compartir el link (WhatsApp, Instagram): JPEG de 1200 × 630.
+// Solo la tienen las fotos del portfolio y del sitio, nunca las de galerías (research R3 de
+// specs/005-portadas-y-fotos-del-sitio).
+export const OG = { width: 1200, height: 630 } as const;
+
+export function claveOg(ruta: string): string {
+  return `${PREFIJO}/${ruta}-og.jpg`;
+}
+
+export function urlOg(ruta: string): string {
+  return `${IMG_HOST}/${claveOg(ruta)}`;
 }
 
 // Clave del original en el bucket privado (solo galerías). Se entrega con URL firmada en la

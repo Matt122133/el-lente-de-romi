@@ -31,6 +31,10 @@ variables, not by a config file: `RAILPACK_START_CMD=npm run worker`,
 `RAILPACK_BUILD_CMD` (skips the Next build), `WORKER_PARALELO=4`, 8 vCPU, no
 public domain. Railway applies the repo's `railway.json` to the app only.
 Contact is WhatsApp only — there are no forms besides the gallery password.
+Since feature 005, every category card shows a cover photo Romi picks in
+`/panel/portfolio`, the home's "Trabajos recientes" mixes photos from every
+category (hers first), and Romi's own photos (home hero, about) live in the
+`sitio/portada` and `sitio/sobremi` destinations.
 
 ## Top-level layout
 
@@ -50,6 +54,7 @@ Contact is WhatsApp only — there are no forms besides the gallery password.
     scripts/db/       migrate, seed the example data, checks without a DB
     scripts/worker/   derivative worker for panel uploads (queue in the fotos table)
     scripts/admin/    npm run admin:clave (hash for Romi's panel password)
+    scripts/portfolio/ npm run portfolio:probar (the recent-work mix)
     scripts/harness/  plan-coverage sensor and spec-kit gate
     manifiestos/, salida/  local cache of scripts/fotos (gitignored: they
                     carry client slugs and photos; the site no longer reads them)
@@ -69,6 +74,12 @@ Contact is WhatsApp only — there are no forms besides the gallery password.
   session; everything else is in the `(privado)` route group, whose layout and
   every page and action call `exigirSesion()`. `src/proxy.ts` only does the
   optimistic redirect.
+- A photo's destination is `portfolio/<categoria>`, `galerias/<slug>` or
+  `sitio/<uso>` (Romi's own photos; the uses are a fixed list in
+  `lib/fotos.ts`). Covers (`categorias.portada`) and recent work (table
+  `recientes`) reference photos by id, without FK: the id is a content hash, so
+  a choice survives re-uploading a category. `src/content/portfolio.ts` reads
+  them; `src/lib/recientes.ts` is the pure mix.
 - A photo row moves `subiendo → subida → procesando → lista` (or `error`);
   the public site only shows `lista`. Script uploads are inserted as `lista`.
 - Schema changes are new files in `db/migraciones/` (`NNN-name.sql`), never
@@ -95,7 +106,9 @@ free of site imports (`node:` modules only). Enforced by review.
 ## Entry point and bootstrap
 
 `src/app/layout.tsx` renders header, page and footer and sets the metadata from
-`src/content/site.ts`. The only shared infrastructure is the database client in
+`src/content/site.ts`, including the share preview (`lib/compartir.ts`) with
+Romi's `-og.jpg`; a category page overrides it with its cover, and galleries
+never declare their own. The only shared infrastructure is the database client in
 `src/lib/db.ts` (one pool, reused across `next dev` reloads). Environment
 variables are listed in `.env.example`: `DATABASE_URL` (Railway's private URL
 in production; the public TCP-proxy URL in `.env.local`), `GALERIAS_SECRETO`
@@ -126,8 +139,11 @@ build time), and the `R2_*` credentials and bucket names that only
   derivative widths, derivative and original keys. `scripts/fotos/` imports it,
   so the names the script uploads and the URLs the site asks for cannot drift.
 - `scripts/fotos/pipeline.ts` — quality, color and naming of the derivatives
-  (constitution IV). Changing anything there means bumping `PIPELINE`, which
-  changes every URL (derivatives are cached for a year).
+  (constitution IV). Changing an existing derivative means bumping `PIPELINE`,
+  which changes every URL and every photo id (derivatives are cached for a
+  year; covers and recent picks are lost). Adding a new derivative does not:
+  the share image `-og.jpg` (1200 × 630 JPEG, portfolio and sitio only, never
+  galleries) was added that way.
 - `src/lib/placeholders.ts` — deterministic fake photos (the `Foto` type is in
   `src/lib/fotos.ts`).
 

@@ -30,7 +30,20 @@ export type Manifiesto = {
 // Solo el formato: que la categoría o la galería exista lo verifica la base al subir (FR-015
 // de specs/003-base-de-datos-railway). Es el mismo CHECK de la tabla fotos.
 export function destinoValido(destino: string): boolean {
-  return /^(portfolio\/[a-z]+|galerias\/[a-z0-9]+(-[a-z0-9]+)*)$/.test(destino);
+  return /^(portfolio\/[a-z]+|sitio\/[a-z]+|galerias\/[a-z0-9]+(-[a-z0-9]+)*)$/.test(destino);
+}
+
+// Las fotos de Romi que no son de ninguna categoría: la de la portada del inicio y la de
+// Sobre mí (specs/005-portadas-y-fotos-del-sitio, research R2). Un destino sitio/<uso>.
+export const USOS_SITIO = ["portada", "sobremi"] as const;
+export type UsoSitio = (typeof USOS_SITIO)[number];
+
+export function esSitio(destino: string): boolean {
+  return destino.startsWith("sitio/");
+}
+
+export function esPortfolio(destino: string): boolean {
+  return destino.startsWith("portfolio/");
 }
 
 export function esGaleria(destino: string): boolean {

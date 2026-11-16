@@ -11,6 +11,9 @@
   --color-acento-texto: #ffffff;
   --color-error: #a33a2c;
   --color-lightbox: rgba(255, 255, 255, 0.97);
+  /* Texto encima de una foto (tarjetas de categoría) y el velo que lo hace legible. */
+  --color-sobre-foto: #ffffff;
+  --velo-foto: rgba(0, 0, 0, 0.38);
 
   --skeleton-base: #e9e9e9;
   --skeleton-brillo: #f4f4f4;

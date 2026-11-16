@@ -13,6 +13,8 @@ import { FormularioClave } from "./FormularioClave";
 // Galería de entrega para clientes (fase 3 del roadmap). Ya tiene contraseña y
 // vencimiento; la galería y sus fotos salen de la base, y la descarga de cada foto todavía
 // es de mentira. Nunca se indexa en Google.
+// Sin openGraph propio a propósito: hereda la foto de Romi del layout y nunca muestra una
+// foto del cliente al compartir el link (FR-013 de specs/005-portadas-y-fotos-del-sitio).
 export const metadata: Metadata = {
   title: "Galería",
   robots: { index: false, follow: false },

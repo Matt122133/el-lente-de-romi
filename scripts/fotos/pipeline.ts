@@ -5,8 +5,8 @@
 import { createHash } from "node:crypto";
 import sharp from "sharp";
 import { rgbaToThumbHash } from "thumbhash";
-import type { Foto } from "../../src/lib/fotos.ts";
-import { claveDerivada, PIPELINE, VARIANTES, type Formato, type Variante } from "../../src/lib/imagenes.ts";
+import { esGaleria, type Foto } from "../../src/lib/fotos.ts";
+import { claveDerivada, claveOg, OG, PIPELINE, VARIANTES, type Formato, type Variante } from "../../src/lib/imagenes.ts";
 
 // PIPELINE vive en src/lib/imagenes.ts: el panel calcula el mismo id en el navegador
 // (research R3 de specs/004-panel-de-romi). Si cambia algo de abajo, se cambia ahí.
@@ -59,6 +59,22 @@ export async function procesarFoto(bytes: Buffer, destino: string): Promise<Proc
         bytes: await salida.toBuffer(),
       });
     }
+  }
+
+  // La imagen para compartir el link, solo fuera de las galerías (research R3 de la 005):
+  // JPEG porque WhatsApp no muestra bien AVIF ni WebP; el recorte busca la zona con más
+  // detalle, en general la cara.
+  if (!esGaleria(destino)) {
+    derivadas.push({
+      clave: claveOg(ruta),
+      contentType: "image/jpeg",
+      bytes: await base
+        .clone()
+        .resize({ width: OG.width, height: OG.height, fit: "cover", position: "attention" })
+        .withIccProfile("srgb")
+        .jpeg({ quality: 80, mozjpeg: true })
+        .toBuffer(),
+    });
   }
 
   // ThumbHash pide como máximo 100 × 100.
