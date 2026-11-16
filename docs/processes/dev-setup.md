@@ -21,7 +21,8 @@ The harness model is described in [harness.md](harness.md).
   database, with test data only, shared by `npm run dev`, the scripts and the
   published site (research R5 of feature 003). Without it, pages that read the
   database show the error page.
-- For the panel, also in `.env.local`: `ADMIN_EMAIL`, `ADMIN_CLAVE_HASH` (run
+- For the panel, also in `.env.local`: `ADMIN_EMAIL` (one mail, or several
+  separated by commas, all with the same password), `ADMIN_CLAVE_HASH` (run
   `npm run admin:clave` in a real terminal: it hides what you type; in
   `.env.local` every `$` of the hash must be escaped as `\$`, because Next
   expands `$NAME` there — the command prints that line too),

@@ -22,7 +22,8 @@ hours.
   deletes keys; it never reads image bytes.
 - Panel: `ADMIN_EMAIL` and `ADMIN_CLAVE_HASH` (Romi's mail and the scrypt hash
   from `npm run admin:clave`) are real personal data: Railway and `.env.local`
-  only. `SESION_SECRETO` signs the panel cookie (rotating it logs Romi out);
+  only. `ADMIN_EMAIL` may list several comma-separated mails (feature 006):
+  aliases of the one administrator, all sharing the one password. `SESION_SECRETO` signs the panel cookie (rotating it logs Romi out);
   `WORKER_SECRETO` authorizes the app to wake the worker.
 - **The repo is public.** No real client names, e-mails, phones, gallery slugs
   or passwords in code, specs, fixtures, or commit messages (see `AGENTS.md`).

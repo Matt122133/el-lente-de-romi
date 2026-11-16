@@ -4,6 +4,7 @@
 
 import assert from "node:assert/strict";
 import { firmaValida, firmar } from "../../src/lib/acceso.ts";
+import { esMailAdmin, mailsAdmin } from "../../src/lib/admins.ts";
 import { idDeFoto } from "../../src/lib/idFoto.ts";
 import { ordenNatural } from "../../src/lib/orden.ts";
 import { firmarSesion, sesionValida } from "../../src/lib/sesion.ts";
@@ -46,5 +47,20 @@ for (const largoBytes of [0, 1, 1000, 5_000_000]) {
   const vista = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.length);
   assert.equal(await idDeFoto(vista), nombreDeHash(bytes), `${largoBytes} bytes`);
 }
+
+// Mails del panel (specs/006-acceso-de-romi). Mails inventados: el repo es público.
+assert.deepEqual(mailsAdmin("una@example.com"), ["una@example.com"], "un mail, como antes (FR-006)");
+const varios = mailsAdmin(" Una@Example.com , otra@example.com,soporte@example.com ");
+assert.deepEqual(varios, ["una@example.com", "otra@example.com", "soporte@example.com"], "lista normalizada (FR-001)");
+for (const m of ["una@example.com", "OTRA@example.com", "  soporte@example.com "]) {
+  assert.ok(esMailAdmin(m, varios), `entra ${m} (FR-002)`);
+}
+assert.ok(!esMailAdmin("intrusa@example.com", varios), "fuera de la lista");
+assert.deepEqual(mailsAdmin(",una@example.com,, ,"), ["una@example.com"], "sin vacíos (FR-005)");
+assert.ok(!esMailAdmin("", mailsAdmin(",una@example.com,, ,")), "mail vacío no entra (FR-005)");
+assert.ok(!esMailAdmin("  ", varios), "mail en blanco no entra");
+assert.deepEqual(mailsAdmin(""), [], "variable vacía");
+assert.deepEqual(mailsAdmin(undefined), [], "variable ausente");
+assert.ok(!esMailAdmin("una@example.com", mailsAdmin(undefined)), "sin mails nadie entra");
 
 console.log("OK");
