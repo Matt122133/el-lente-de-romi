@@ -1,6 +1,6 @@
 ---
 ticket: none
-status: active
+status: completed
 covers:
   - src/lib/admins.ts
   - src/app/panel/entrar/acciones.ts
